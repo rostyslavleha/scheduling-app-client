@@ -3,7 +3,7 @@ import { blue, blueGrey } from "@mui/material/colors";
 // import { styled } from "@mui/material/styles";
 
 export const useStyles = makeStyles((theme) => {
-  console.log(theme.breakpoints);
+  // console.log(theme.breakpoints);
   return {
     //common
     navImg: {

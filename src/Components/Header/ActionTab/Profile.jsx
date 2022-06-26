@@ -9,7 +9,6 @@ import {
   ListItemText,
   Menu,
 } from "@mui/material";
-
 import { useStyles } from "../HeaderStyle";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";

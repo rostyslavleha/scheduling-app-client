@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
   Button,
   List,
@@ -30,23 +30,25 @@ export default function SidenavData({ handleDrawerClose }) {
   return (
     <List>
       {listItemData.map((item, i) => (
-        <Button
-          size="small"
-          onClick={() => handleDrawerClose()}
-          className={classes.navButton}
-        >
-          <ListItem
-            exact
-            key={i}
-            component={NavLink}
-            to={item.link}
-            className={classes.navlink}
-            activeClassName={classes.selectedNav}
+        <Fragment key={i}>
+          <Button
+            size="small"
+            onClick={() => handleDrawerClose()}
+            className={classes.navButton}
           >
-            <ListItemIcon>{item.icon}</ListItemIcon>
-            <ListItemText>{item.label}</ListItemText>
-          </ListItem>
-        </Button>
+            <ListItem
+              exact
+              key={i}
+              component={NavLink}
+              to={item.link}
+              className={classes.navlink}
+              activeClassName={classes.selectedNav}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText>{item.label}</ListItemText>
+            </ListItem>
+          </Button>
+        </Fragment>
       ))}
     </List>
   );
