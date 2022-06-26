@@ -1,13 +1,9 @@
 import { Drawer, Hidden } from "@mui/material";
 import React from "react";
 import { useStyles } from "./HeaderStyle";
-import SidenavData from "./SidenavData";
+import SideNavData from "./SideNavData";
 
-export default function Sidenav({
-  mobileOpen,
-  handleDrawerClose,
-  handleDrawerToggle,
-}) {
+const SideNav = ({ mobileOpen, handleDrawerClose, handleDrawerToggle }) => {
   const classes = useStyles();
 
   return (
@@ -26,7 +22,7 @@ export default function Sidenav({
             keepMounted: true, // Better open performance on mobile.
           }}
         >
-          <SidenavData handleDrawerClose={handleDrawerClose} />
+          <SideNavData handleDrawerClose={handleDrawerClose} />
         </Drawer>
       </Hidden>
       {/* visible on screen greater than 600px */}
@@ -38,9 +34,11 @@ export default function Sidenav({
           variant="permanent"
           open
         >
-          <SidenavData handleDrawerClose={handleDrawerClose} />
+          <SideNavData handleDrawerClose={handleDrawerClose} />
         </Drawer>
       </Hidden>
     </nav>
   );
-}
+};
+
+export default SideNav;

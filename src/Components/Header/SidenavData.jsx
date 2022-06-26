@@ -8,23 +8,14 @@ import {
 } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import { useStyles } from "./HeaderStyle";
-
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import BookIcon from "@mui/icons-material/Book";
-import PostAddIcon from "@mui/icons-material/PostAdd";
-import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 
-export default function SidenavData({ handleDrawerClose }) {
+const SideNavData = ({ handleDrawerClose }) => {
   const classes = useStyles();
   const listItemData = [
-    { label: "Dashboard", link: "/", icon: <DashboardIcon /> },
+    { label: "Dashboard", link: "/dashboard", icon: <DashboardIcon /> },
     { label: "Blog Post", link: "/blog", icon: <BookIcon /> },
-    { label: "Link 1", link: "/link1", icon: <PostAddIcon /> },
-    {
-      label: "Notification",
-      link: "/notification",
-      icon: <NotificationsActiveIcon />,
-    },
   ];
 
   return (
@@ -52,4 +43,6 @@ export default function SidenavData({ handleDrawerClose }) {
       ))}
     </List>
   );
-}
+};
+
+export default SideNavData;

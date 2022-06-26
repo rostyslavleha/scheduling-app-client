@@ -40,7 +40,7 @@ export default function Profile() {
       >
         <Badge badgeContent={null} color="secondary">
           <img
-            alt="https://firebasestorage.googleapis.com/v0/b/promote-b3a12.appspot.com/o/userAvatar%2FdefaultAvatar.svg?alt=media&token=57a9ef20-56c2-488c-9e05-3755f6206ec5"
+            alt="noimage"
             src="https://firebasestorage.googleapis.com/v0/b/promote-b3a12.appspot.com/o/userAvatar%2FdefaultAvatar.svg?alt=media&token=57a9ef20-56c2-488c-9e05-3755f6206ec5"
             className={classes.navImg}
           />
