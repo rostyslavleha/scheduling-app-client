@@ -10,24 +10,24 @@ import {
   Menu,
 } from "@mui/material";
 import { useStyles } from "../HeaderStyle";
-import SettingsIcon from "@mui/icons-material/Settings";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 
-export default function Profile() {
+const Profile = ({ history }) => {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
-    console.log("handleClicked ", event.currentTarget);
+    // console.log("handleClicked ", event.currentTarget);
   };
-  const handleClose = () => {
+  const handleClose = (action) => {
     setAnchorEl(null);
   };
 
   const dropDownData = [
-    { label: "setting", icon: <SettingsIcon /> },
-    { label: "logout", icon: <ExitToAppIcon /> },
+    { label: "Profile", icon: <AccountCircleIcon /> },
+    { label: "Logout", icon: <ExitToAppIcon /> },
   ];
 
   return (
@@ -70,4 +70,6 @@ export default function Profile() {
       </Menu>
     </Fragment>
   );
-}
+};
+
+export default Profile;

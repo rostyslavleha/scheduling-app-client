@@ -9,11 +9,9 @@ const Footer = () => {
     <Box className={classes.footer}>
       <Grid container>
         <Grid item xs={12} sm={6}>
-          <Typography
-            variant="body1"
-            color="textSecondary"
-            align="center"
-          ></Typography>
+          <Typography variant="body1" color="textSecondary" align="center">
+            Sample Footer
+          </Typography>
         </Grid>
       </Grid>
     </Box>

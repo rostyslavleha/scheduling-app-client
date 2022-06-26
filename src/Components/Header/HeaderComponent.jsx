@@ -6,7 +6,16 @@ import NavbarComponent from "./NavbarComponent";
 import SideNav from "./SideNav";
 import BlogPost from "../BodyComponent/BlogPost";
 import Dashboard from "../BodyComponent/Dashboard";
-import Landing from "../Landing/Landing";
+import UserProfile from "../BodyComponent/UserProfile";
+import AdminProfile from "../BodyComponent/AdminProfile";
+import Landing from "../BodyComponent/Auth/Landing";
+import ForgotPassword from "../BodyComponent/Auth/ForgotPassword";
+import ResetPassword from "../BodyComponent/Auth/ResetPassword";
+import SignUp from "../BodyComponent/Auth/SignUp";
+import SignIn from "../BodyComponent/Auth/SignIn";
+import Activate from "../BodyComponent/Auth/Activate";
+import UserRoute from "../BodyComponent/Auth/UserRoute";
+import AdminRoute from "../BodyComponent/Auth/AdminRoute";
 
 export default function HeaderComponent() {
   const classes = useStyles();
@@ -21,17 +30,21 @@ export default function HeaderComponent() {
   return (
     <Fragment>
       <Switch>
-        <Route exact path="/" render={() => <Landing />}></Route>
-        <div className={classes.wrapper}>
+        <Route exact path="/" component={Landing}></Route>
+        <Route exact path="/signin" component={SignIn}></Route>
+        <Route exact path="/signup" render={() => <SignUp />}></Route>
+        <Route exact path="/auth/activate/:token" component={Activate}></Route>
+        <Box className={classes.wrapper}>
           <NavbarComponent handleDrawerToggle={handleDrawerToggle} />
           <SideNav
             mobileOpen={mobileOpen}
             handleDrawerClose={handleDrawerClose}
             handleDrawerToggle={handleDrawerToggle}
           />
-          <Route exact path="/dashboard" render={() => <Dashboard />} />
-          <Route exact path="/blog" render={() => <BlogPost />} />\{" "}
-        </div>
+          <Route exact path="/dashboard" component={Dashboard} />
+          <Route exact path="/blog" render={() => <BlogPost />} />
+          <UserRoute exact path="/profile" component={UserProfile}></UserRoute>
+        </Box>
       </Switch>
     </Fragment>
   );
