@@ -42,7 +42,7 @@ export default function HeaderComponent() {
             handleDrawerToggle={handleDrawerToggle}
           />
           <Route exact path="/dashboard" component={Dashboard} />
-          <Route exact path="/blog" render={() => <BlogPost />} />
+          <Route exact path="/blog" component={BlogPost} />
           <UserRoute exact path="/profile" component={UserProfile}></UserRoute>
         </Box>
       </Switch>

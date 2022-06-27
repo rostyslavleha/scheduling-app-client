@@ -9,20 +9,32 @@ import {
 } from "@mui/material";
 import { useStyles } from "./HeaderStyle";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-
+import Logo from "../../media/logo.svg";
+import { Link } from "react-router-dom";
 import Profile from "./ActionTab/Profile";
 
-export default function NavbarComponent({ handleDrawerToggle }) {
+const NavbarComponent = ({ handleDrawerToggle, history }) => {
   const classes = useStyles();
 
   return (
     <AppBar>
       <Toolbar className={classes.toolbar}>
-        <Box style={{ display: "flex" }}>
-          <Typography variant="h6" className={classes.logo}>
-            {"<AdminPannel />"}
-          </Typography>
-        </Box>
+        <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
+          <Box style={{ display: "flex", alignItems: "center" }} sx={{ ml: 0 }}>
+            <Box
+              component="img"
+              sx={{
+                height: 40,
+              }}
+              alt="logo"
+              src={Logo}
+            />
+            <Typography variant="h6" className={classes.logo}>
+              {"PROMOTE"}
+            </Typography>
+          </Box>
+        </Link>
+
         <Hidden smDown>
           <Box>
             <Profile />
@@ -36,4 +48,6 @@ export default function NavbarComponent({ handleDrawerToggle }) {
       </Toolbar>
     </AppBar>
   );
-}
+};
+
+export default NavbarComponent;

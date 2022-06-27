@@ -41,7 +41,7 @@ const Profile = ({ history }) => {
         <Badge badgeContent={null} color="secondary">
           <img
             alt="noimage"
-            src="https://firebasestorage.googleapis.com/v0/b/promote-b3a12.appspot.com/o/userAvatar%2FdefaultAvatar.svg?alt=media&token=57a9ef20-56c2-488c-9e05-3755f6206ec5"
+            src={process.env.REACT_APP_DEFAULT_USER_PROFILE_AVATAR}
             className={classes.navImg}
           />
         </Badge>
