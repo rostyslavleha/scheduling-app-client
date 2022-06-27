@@ -112,7 +112,7 @@ const SignIn = ({ history }) => {
           </Button>
           <Grid container>
             <Grid item xs>
-              <Link to="forgot-password">Forgot password?</Link>
+              <Link to="/auth/password/forgot">Forgot password?</Link>
             </Grid>
             <Grid item>
               <Link to="/signup">{"Don't have an account? Sign Up"}</Link>

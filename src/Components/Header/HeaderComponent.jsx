@@ -34,6 +34,16 @@ export default function HeaderComponent() {
         <Route exact path="/signin" component={SignIn}></Route>
         <Route exact path="/signup" render={() => <SignUp />}></Route>
         <Route exact path="/auth/activate/:token" component={Activate}></Route>
+        <Route
+          exact
+          path="/auth/password/forgot"
+          component={ForgotPassword}
+        ></Route>
+        <Route
+          exact
+          path="/auth/password/reset/:token"
+          component={ResetPassword}
+        ></Route>
         <Box className={classes.wrapper}>
           <NavbarComponent handleDrawerToggle={handleDrawerToggle} />
           <SideNav
