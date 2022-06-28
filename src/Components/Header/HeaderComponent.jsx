@@ -7,6 +7,7 @@ import SideNav from "./SideNav";
 import BlogPost from "../BodyComponent/BlogPost";
 import Dashboard from "../BodyComponent/Dashboard";
 import UserProfile from "../BodyComponent/UserProfile";
+import Availability from "../BodyComponent/Availability";
 import AdminProfile from "../BodyComponent/AdminProfile";
 import Landing from "../BodyComponent/Auth/Landing";
 import ForgotPassword from "../BodyComponent/Auth/ForgotPassword";
@@ -14,6 +15,9 @@ import ResetPassword from "../BodyComponent/Auth/ResetPassword";
 import SignUp from "../BodyComponent/Auth/SignUp";
 import SignIn from "../BodyComponent/Auth/SignIn";
 import Activate from "../BodyComponent/Auth/Activate";
+import Stories from "../BodyComponent/AdminComponents/Stories";
+import NewStory from "../BodyComponent/AdminComponents/NewStory";
+import UpdateStory from "../BodyComponent/AdminComponents/UpdateStory";
 import UserRoute from "../BodyComponent/Auth/UserRoute";
 import AdminRoute from "../BodyComponent/Auth/AdminRoute";
 
@@ -54,6 +58,31 @@ export default function HeaderComponent() {
           <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/blog" component={BlogPost} />
           <UserRoute exact path="/profile" component={UserProfile}></UserRoute>
+          <UserRoute
+            exact
+            path="/availability"
+            component={Availability}
+          ></UserRoute>
+          <AdminRoute
+            exact
+            path="/admin/profile"
+            component={AdminProfile}
+          ></AdminRoute>
+          <AdminRoute
+            path="/admin/stories"
+            exact
+            component={Stories}
+          ></AdminRoute>
+          <AdminRoute
+            path="/admin/newStory"
+            exact
+            component={NewStory}
+          ></AdminRoute>
+          <AdminRoute
+            path="/admin/story/update/:storyId"
+            exact
+            component={UpdateStory}
+          ></AdminRoute>
         </Box>
       </Switch>
     </Fragment>

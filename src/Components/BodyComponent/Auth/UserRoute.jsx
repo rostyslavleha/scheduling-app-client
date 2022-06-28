@@ -7,7 +7,7 @@ const UserRoute = ({ component: Component, ...rest }) => (
   <Route
     {...rest}
     render={(props) =>
-      isAuth() ? (
+      isAuth() && (isAuth().role === "spoke" || isAuth().role === "hub") ? (
         <Component {...props}></Component>
       ) : (
         <Redirect

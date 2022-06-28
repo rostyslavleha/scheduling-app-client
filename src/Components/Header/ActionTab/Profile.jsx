@@ -12,6 +12,7 @@ import {
 import { useStyles } from "../HeaderStyle";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { isAuth } from "../../../Common/helpers";
 
 const Profile = ({ history }) => {
   const classes = useStyles();
@@ -40,8 +41,8 @@ const Profile = ({ history }) => {
       >
         <Badge badgeContent={null} color="secondary">
           <img
-            alt="noimage"
-            src={process.env.REACT_APP_DEFAULT_USER_PROFILE_AVATAR}
+            alt={process.env.REACT_APP_DEFAULT_USER_PROFILE_AVATAR}
+            src={isAuth().profilePhoto}
             className={classes.navImg}
           />
         </Badge>

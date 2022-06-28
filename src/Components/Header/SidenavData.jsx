@@ -11,6 +11,11 @@ import { useStyles } from "./HeaderStyle";
 import DashboardIcon from "@mui/icons-material/Dashboard";
 import BookIcon from "@mui/icons-material/Book";
 import PersonIcon from "@mui/icons-material/Person";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import AutoStoriesIcon from "@mui/icons-material/AutoStories";
+import GroupIcon from "@mui/icons-material/Group";
+import AddCardIcon from "@mui/icons-material/AddCard";
 import { isAuth } from "../../Common/helpers";
 
 const SideNavData = ({ handleDrawerClose }) => {
@@ -33,6 +38,42 @@ const SideNavData = ({ handleDrawerClose }) => {
       link: "/profile",
       icon: <PersonIcon />,
       access: ["hub", "spoke"],
+    },
+    {
+      label: "Profile",
+      link: "/admin/profile",
+      icon: <PersonIcon />,
+      access: ["admin"],
+    },
+    {
+      label: "Availability",
+      link: "/availability",
+      icon: <AssignmentTurnedInIcon />,
+      access: ["hub"],
+    },
+    {
+      label: "Appointments",
+      link: "/appointments",
+      icon: <CalendarMonthIcon />,
+      access: ["hub", "spoke"],
+    },
+    {
+      label: "Stories",
+      link: "/admin/stories",
+      icon: <AutoStoriesIcon />,
+      access: ["admin"],
+    },
+    {
+      label: "New Story",
+      link: "/admin/newStory",
+      icon: <AddCardIcon />,
+      access: ["admin"],
+    },
+    {
+      label: "Clinicians",
+      link: "clinician",
+      icon: <GroupIcon />,
+      access: ["admin", "spoke"],
     },
   ];
 

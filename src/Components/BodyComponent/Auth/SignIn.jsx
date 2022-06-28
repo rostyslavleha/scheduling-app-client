@@ -46,7 +46,7 @@ const SignIn = ({ history }) => {
           });
           toast.success(`${response.data.user.firstName} Welcome!`);
           isAuth() && isAuth().role === "admin"
-            ? history.push("/profile")
+            ? history.push("/admin/profile")
             : history.push("/profile");
         });
       })

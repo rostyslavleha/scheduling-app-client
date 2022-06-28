@@ -3,10 +3,8 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import { isAuth, getCookie, signout } from "../../Common/helpers";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import Breadcrumbs from "@mui/material/Breadcrumbs";
-import Link from "@mui/material/Link";
+import NavBreadCrumb from "./NavBreadCrumb";
 
 const UserProfile = ({ history }) => {
   const [values, setValues] = useState({
@@ -155,11 +153,7 @@ const UserProfile = ({ history }) => {
 
   return (
     <Box mt={2}>
-      <Breadcrumbs aria-label="breadcrumb">
-        <Link underline="hover" color="inherit" href="/profile">
-          /Profile
-        </Link>
-      </Breadcrumbs>
+      <NavBreadCrumb path="/profile" name="/Profile"></NavBreadCrumb>
       {JSON.stringify(values)}
     </Box>
   );
