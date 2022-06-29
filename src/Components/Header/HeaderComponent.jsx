@@ -8,7 +8,7 @@ import BlogPost from "../BodyComponent/BlogPost";
 import Dashboard from "../BodyComponent/Dashboard";
 import UserProfile from "../BodyComponent/UserProfile";
 import Availability from "../BodyComponent/Availability";
-import HubAppointments from "../BodyComponent/HubAppointments";
+import RequestedHubAppointments from "../BodyComponent/RequestedHubAppointments";
 import AdminProfile from "../BodyComponent/AdminProfile";
 import Landing from "../BodyComponent/Auth/Landing";
 import ForgotPassword from "../BodyComponent/Auth/ForgotPassword";
@@ -66,8 +66,8 @@ export default function HeaderComponent() {
           ></UserRoute>
           <UserRoute
             exact
-            path="/appointments"
-            component={HubAppointments}
+            path="/request/appointment"
+            component={RequestedHubAppointments}
           ></UserRoute>
           <AdminRoute
             exact

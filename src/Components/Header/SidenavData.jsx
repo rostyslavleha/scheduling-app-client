@@ -52,10 +52,10 @@ const SideNavData = ({ handleDrawerClose }) => {
       access: ["hub"],
     },
     {
-      label: "Appointments",
-      link: "/appointments",
+      label: "Requested Appointments",
+      link: "/request/appointment",
       icon: <CalendarMonthIcon />,
-      access: ["hub", "spoke"],
+      access: ["hub"],
     },
     {
       label: "Stories",
