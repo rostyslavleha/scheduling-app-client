@@ -81,7 +81,6 @@ const UserProfile = ({ history }) => {
       },
     })
       .then((response) => {
-        console.log("User Profile", response);
         const {
           firstName,
           lastName,
