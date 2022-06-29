@@ -18,6 +18,8 @@ import moment from "moment";
 import axios from "axios";
 import { isAuth, getCookie } from "../../Common/helpers";
 import CircularProgress from "@mui/material/CircularProgress";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const not = (a, b) => {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -108,9 +110,11 @@ export default function Availability() {
     })
       .then((response) => {
         let availabilityByDate = [];
-        response.data.availableSlots[0].availability.slots.map((slot) => {
-          availabilityByDate.push(slot.time);
-        });
+        response.data.availableSlots.length === 0
+          ? setLeft(generatedTimeSlots) && setRight([])
+          : response.data.availableSlots[0].availability.slots.map((slot) => {
+              availabilityByDate.push(slot.time);
+            });
 
         availabilityByDate.length > 0
           ? setRight(availabilityByDate.sort())
@@ -149,21 +153,27 @@ export default function Availability() {
         slots: data,
       },
     ];
-    axios({
-      method: "POST",
-      url: `${process.env.REACT_APP_API}/availability`,
-      headers: { Authorization: `Bearer ${token}` },
-      data: { clinicianId, availability },
-    })
-      .then((response) => {
-        setLoading(false);
-        console.log("created availability", response);
-        getAvailabilityByDate();
+    // check if the updating availability is greater than or equal to the current date then update availability accordingly otherwise show the error message
+    if (convertToDate(appointmentDate) >= convertToDate(new Date())) {
+      axios({
+        method: "POST",
+        url: `${process.env.REACT_APP_API}/availability`,
+        headers: { Authorization: `Bearer ${token}` },
+        data: { clinicianId, availability },
       })
-      .catch((error) => {
-        setLoading(false);
-        console.log("Availability ERROR", error);
-      });
+        .then((response) => {
+          setLoading(false);
+          console.log("created availability", response);
+          getAvailabilityByDate();
+        })
+        .catch((error) => {
+          setLoading(false);
+          console.log("Availability ERROR", error);
+        });
+    } else {
+      setLoading(false);
+      toast.error(`Can not update availability for previous dates`);
+    }
   };
 
   function tConv24(time24) {
@@ -179,32 +189,35 @@ export default function Availability() {
   const customList = (items) => (
     <Paper sx={{ width: 300, height: 500, overflow: "auto" }}>
       <List dense component="div" role="list">
-        {items.map((value) => {
-          const labelId = `transfer-list-item-${value}-label`;
-          return (
-            <ListItem
-              key={value}
-              role="listitem"
-              button
-              onClick={handleToggle(value)}
-            >
-              <ListItemIcon>
-                <Checkbox
-                  checked={checked.indexOf(value) !== -1}
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{
-                    "aria-labelledby": labelId,
-                  }}
-                />
-              </ListItemIcon>
-              <ListItemText
-                id={labelId}
-                primary={`${value} [${tConv24(value)}]`}
-              />
-            </ListItem>
-          );
-        })}
+        {items.length > 0
+          ? items.map((value) => {
+              const labelId = `transfer-list-item-${value}-label`;
+              return (
+                <ListItem
+                  key={value}
+                  role="listitem"
+                  button
+                  onClick={handleToggle(value)}
+                >
+                  <ListItemIcon>
+                    <Checkbox
+                      checked={checked.indexOf(value) !== -1}
+                      tabIndex={-1}
+                      disableRipple
+                      inputProps={{
+                        "aria-labelledby": labelId,
+                      }}
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    id={labelId}
+                    primary={`${value} [${tConv24(value)}]`}
+                  />
+                </ListItem>
+              );
+            })
+          : "No Slots"}
+
         <ListItem />
       </List>
     </Paper>
@@ -213,7 +226,7 @@ export default function Availability() {
   return (
     <Fragment>
       <NavBreadCrumb path="/availability" name="/Availability"></NavBreadCrumb>
-
+      <ToastContainer></ToastContainer>
       <Grid container spacing={5} justifyContent="center" alignItems="center">
         <LocalizationProvider dateAdapter={AdapterDateFns}>
           <StaticDatePicker
@@ -228,7 +241,14 @@ export default function Availability() {
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
-        <Grid item>{customList(left)}</Grid>
+        <Grid item>
+          <Grid container direction="column" alignItems="center">
+            <Grid sx={{ my: 1 }}>Slots Available</Grid>
+            <Grid sx={{ my: 1 }} item>
+              {customList(left)}
+            </Grid>
+          </Grid>
+        </Grid>
         <Grid item>
           <Grid container direction="column" alignItems="center">
             <Button
@@ -273,7 +293,14 @@ export default function Availability() {
             </Button>
           </Grid>
         </Grid>
-        <Grid item>{customList(right)}</Grid>
+        <Grid item>
+          <Grid container direction="column" alignItems="center">
+            <Grid sx={{ my: 1 }}>Current Availability</Grid>
+            <Grid sx={{ my: 1 }} item>
+              {customList(right)}
+            </Grid>{" "}
+          </Grid>
+        </Grid>
       </Grid>
       <Box
         component="span"
