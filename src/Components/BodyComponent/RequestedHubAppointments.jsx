@@ -11,8 +11,13 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import HelpIcon from "@mui/icons-material/Help";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { Link } from "react-router-dom";
+import Button from "@mui/material/Button";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
+import Avatar from "@mui/material/Avatar";
+import Tooltip from "@mui/material/Tooltip";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -54,7 +59,7 @@ const RequestedHubAppointments = () => {
         });
       })
       .catch((error) => {
-        console.log("Stories ERROR", error.response.data.error);
+        console.log("Appointments Info ERROR", error.response.data.error);
       });
   };
   const convertToDate = (str) => {
@@ -78,19 +83,20 @@ const RequestedHubAppointments = () => {
         <Table sx={{ minWidth: 700 }} aria-label="customized table">
           <TableHead>
             <TableRow>
-              <StyledTableCell>Appointment Id</StyledTableCell>
+              <StyledTableCell></StyledTableCell>
               <StyledTableCell>Requested By</StyledTableCell>
               <StyledTableCell>Requested For</StyledTableCell>
               <StyledTableCell>Appointment Date</StyledTableCell>
               <StyledTableCell>Appointment Time</StyledTableCell>
               <StyledTableCell>Appointment Status</StyledTableCell>
+              <StyledTableCell>Appointment Id</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {requestedAppointments.map((row) => (
-              <StyledTableRow style={{ textAlign: "center" }} key={row._id}>
-                <StyledTableCell component="th" scope="row">
-                  {row._id}
+              <StyledTableRow style={{ textAlign: "left" }} key={row._id}>
+                <StyledTableCell>
+                  <Avatar alt="img" src={row.requestedBy.profilePhoto} />
                 </StyledTableCell>
                 <StyledTableCell>
                   {row.requestedBy.firstName} {row.requestedBy.lastName}
@@ -104,18 +110,34 @@ const RequestedHubAppointments = () => {
                 <StyledTableCell>{row.appointmentTime}</StyledTableCell>
                 <StyledTableCell>
                   {row.status}
-                  {row.status === "pending" && (
-                    <HelpIcon fontSize="small" color="primary"></HelpIcon>
-                  )}
-                  {row.status === "accepted" && (
-                    <CheckCircleIcon
-                      fontSize="small"
-                      color="success"
-                    ></CheckCircleIcon>
-                  )}
-                  {row.status === "rejected" && (
-                    <CancelIcon fontSize="small" color="error"></CancelIcon>
-                  )}
+
+                  <Tooltip
+                    title={row.status === "pending" ? "PENDING" : "REJECTED"}
+                  >
+                    <Button>
+                      {row.status === "pending" && (
+                        <HelpIcon color="primary"></HelpIcon>
+                      )}
+                      {row.status === "rejected" && (
+                        <CancelIcon color="error"></CancelIcon>
+                      )}
+                    </Button>
+                  </Tooltip>
+                </StyledTableCell>
+                <StyledTableCell component="th" scope="row">
+                  {row._id}
+                  <Tooltip title="click for more information">
+                    <Button
+                      size="small"
+                      component={Link}
+                      to={`/request/appointment/${row._id}`}
+                    >
+                      <OpenInFullIcon
+                        color="primary"
+                        size="small"
+                      ></OpenInFullIcon>
+                    </Button>
+                  </Tooltip>
                 </StyledTableCell>
               </StyledTableRow>
             ))}

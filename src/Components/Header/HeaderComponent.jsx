@@ -21,6 +21,7 @@ import NewStory from "../BodyComponent/AdminComponents/NewStory";
 import UpdateStory from "../BodyComponent/AdminComponents/UpdateStory";
 import UserRoute from "../BodyComponent/Auth/UserRoute";
 import AdminRoute from "../BodyComponent/Auth/AdminRoute";
+import RequestedHubAppointmentById from "../BodyComponent/RequestedHubAppointmentById";
 
 export default function HeaderComponent() {
   const classes = useStyles();
@@ -68,6 +69,11 @@ export default function HeaderComponent() {
             exact
             path="/request/appointment"
             component={RequestedHubAppointments}
+          ></UserRoute>
+          <UserRoute
+            exact
+            path="/request/appointment/:appointmentId"
+            component={RequestedHubAppointmentById}
           ></UserRoute>
           <AdminRoute
             exact
