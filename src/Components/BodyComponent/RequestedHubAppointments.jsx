@@ -92,8 +92,8 @@ const RequestedHubAppointments = () => {
               <StyledTableCell>Requested For</StyledTableCell>
               <StyledTableCell>Appointment Date</StyledTableCell>
               <StyledTableCell>Appointment Time</StyledTableCell>
-              <StyledTableCell>Appointment Status</StyledTableCell>
-              <StyledTableCell>Appointment Id</StyledTableCell>
+              <StyledTableCell colSpan={2}>Appointment Status</StyledTableCell>
+              <StyledTableCell colSpan={2}>Appointment Id</StyledTableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -112,9 +112,8 @@ const RequestedHubAppointments = () => {
                   {convertToDate(row.appointmentDate)}
                 </StyledTableCell>
                 <StyledTableCell>{row.appointmentTime}</StyledTableCell>
+                <StyledTableCell>{row.status}</StyledTableCell>
                 <StyledTableCell>
-                  {row.status}
-
                   <Tooltip
                     title={row.status === "pending" ? "PENDING" : "REJECTED"}
                   >
@@ -132,6 +131,8 @@ const RequestedHubAppointments = () => {
                 </StyledTableCell>
                 <StyledTableCell component="th" scope="row">
                   {row._id}
+                </StyledTableCell>
+                <StyledTableCell>
                   <Tooltip title="click for more information">
                     <Button
                       size="small"
