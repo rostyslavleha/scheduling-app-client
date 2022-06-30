@@ -17,7 +17,6 @@ import Button from "@mui/material/Button";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -38,6 +37,11 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
     border: 0,
   },
 }));
+
+const tableHeadStyle = {
+  textTransform: "uppercase",
+  minWidth: 700,
+};
 
 const RequestedHubAppointments = () => {
   const [values, setValues] = useState({
@@ -80,7 +84,7 @@ const RequestedHubAppointments = () => {
         name="/requested/Appointments"
       ></NavBreadCrumb>
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 700 }} aria-label="customized table">
+        <Table sx={tableHeadStyle} aria-label="customized table">
           <TableHead>
             <TableRow>
               <StyledTableCell></StyledTableCell>
@@ -114,14 +118,16 @@ const RequestedHubAppointments = () => {
                   <Tooltip
                     title={row.status === "pending" ? "PENDING" : "REJECTED"}
                   >
-                    <Button>
-                      {row.status === "pending" && (
-                        <HelpIcon color="primary"></HelpIcon>
-                      )}
-                      {row.status === "rejected" && (
-                        <CancelIcon color="error"></CancelIcon>
-                      )}
-                    </Button>
+                    <span>
+                      <Button>
+                        {row.status === "pending" && (
+                          <HelpIcon color="primary"></HelpIcon>
+                        )}
+                        {row.status === "rejected" && (
+                          <CancelIcon color="error"></CancelIcon>
+                        )}
+                      </Button>
+                    </span>
                   </Tooltip>
                 </StyledTableCell>
                 <StyledTableCell component="th" scope="row">

@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
+import Tooltip from "@mui/material/Tooltip";
 
 const RequestedHubAppointmentById = ({ match }) => {
   const [values, setValues] = useState({
@@ -70,24 +71,44 @@ const RequestedHubAppointmentById = ({ match }) => {
             alignItems="center"
             spacing={2}
           >
-            <Button
-              color="success"
-              variant="contained"
-              disabled={
-                appointmentByIdInfo.status === "rejected" ? true : false
+            <Tooltip
+              title={
+                appointmentByIdInfo.status === "rejected"
+                  ? "Can not approve a rejected appointment"
+                  : "Click to approve request"
               }
             >
-              Approve<CheckCircleIcon></CheckCircleIcon>
-            </Button>
-            <Button
-              color="error"
-              variant="contained"
-              disabled={
-                appointmentByIdInfo.status === "rejected" ? true : false
+              <span>
+                <Button
+                  color="success"
+                  variant="contained"
+                  disabled={
+                    appointmentByIdInfo.status === "rejected" ? true : false
+                  }
+                >
+                  Approve<CheckCircleIcon></CheckCircleIcon>
+                </Button>
+              </span>
+            </Tooltip>
+            <Tooltip
+              title={
+                appointmentByIdInfo.status === "rejected"
+                  ? "Appointment already rejected"
+                  : "Click to reject request"
               }
             >
-              Reject<CancelIcon></CancelIcon>
-            </Button>
+              <span>
+                <Button
+                  color="error"
+                  variant="contained"
+                  disabled={
+                    appointmentByIdInfo.status === "rejected" ? true : false
+                  }
+                >
+                  Reject<CancelIcon></CancelIcon>
+                </Button>
+              </span>
+            </Tooltip>
           </Stack>
         </Fragment>
       )}
