@@ -17,6 +17,7 @@ import Button from "@mui/material/Button";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -46,11 +47,13 @@ const tableHeadStyle = {
 const RequestedHubAppointments = () => {
   const [values, setValues] = useState({
     requestedAppointments: [],
+    loading: false,
   });
-  const { requestedAppointments } = values;
+  const { requestedAppointments, loading } = values;
   const token = getCookie("token");
 
   const getRequestedAppointments = () => {
+    setValues({ ...values, loading: true });
     axios({
       method: "GET",
       url: `${process.env.REACT_APP_API}/request-appointment`,
@@ -60,9 +63,11 @@ const RequestedHubAppointments = () => {
         setValues({
           ...values,
           requestedAppointments: response.data.appointments,
+          loading: false,
         });
       })
       .catch((error) => {
+        setValues({ ...values, loading: false });
         console.log("Appointments Info ERROR", error.response.data.error);
       });
   };
@@ -82,75 +87,81 @@ const RequestedHubAppointments = () => {
       <NavBreadCrumb
         path="/request/appointment"
         name="/requested/Appointments"
-      ></NavBreadCrumb>
-      <TableContainer component={Paper}>
-        <Table sx={tableHeadStyle} aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell></StyledTableCell>
-              <StyledTableCell>Requested By</StyledTableCell>
-              <StyledTableCell>Requested For</StyledTableCell>
-              <StyledTableCell>Appointment Date</StyledTableCell>
-              <StyledTableCell>Appointment Time</StyledTableCell>
-              <StyledTableCell colSpan={2}>Appointment Status</StyledTableCell>
-              <StyledTableCell colSpan={2}>Appointment Id</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {requestedAppointments.map((row) => (
-              <StyledTableRow style={{ textAlign: "left" }} key={row._id}>
-                <StyledTableCell>
-                  <Avatar alt="img" src={row.requestedBy.profilePhoto} />
+      ></NavBreadCrumb>{" "}
+      {loading ? (
+        <CircularProgress></CircularProgress>
+      ) : (
+        <TableContainer component={Paper}>
+          <Table sx={tableHeadStyle} aria-label="customized table">
+            <TableHead>
+              <TableRow>
+                <StyledTableCell></StyledTableCell>
+                <StyledTableCell>Requested By</StyledTableCell>
+                <StyledTableCell>Requested For</StyledTableCell>
+                <StyledTableCell>Appointment Date</StyledTableCell>
+                <StyledTableCell>Appointment Time</StyledTableCell>
+                <StyledTableCell colSpan={2}>
+                  Appointment Status
                 </StyledTableCell>
-                <StyledTableCell>
-                  {row.requestedBy.firstName} {row.requestedBy.lastName}
-                </StyledTableCell>
-                <StyledTableCell>
-                  {row.requestedFor.firstName} {row.requestedFor.lastName}
-                </StyledTableCell>
-                <StyledTableCell>
-                  {convertToDate(row.appointmentDate)}
-                </StyledTableCell>
-                <StyledTableCell>{row.appointmentTime}</StyledTableCell>
-                <StyledTableCell>{row.status}</StyledTableCell>
-                <StyledTableCell>
-                  <Tooltip
-                    title={row.status === "pending" ? "PENDING" : "REJECTED"}
-                  >
-                    <span>
-                      <Button>
-                        {row.status === "pending" && (
-                          <HelpIcon color="primary"></HelpIcon>
-                        )}
-                        {row.status === "rejected" && (
-                          <CancelIcon color="error"></CancelIcon>
-                        )}
-                      </Button>
-                    </span>
-                  </Tooltip>
-                </StyledTableCell>
-                <StyledTableCell component="th" scope="row">
-                  {row._id}
-                </StyledTableCell>
-                <StyledTableCell>
-                  <Tooltip title="click for more information">
-                    <Button
-                      size="small"
-                      component={Link}
-                      to={`/request/appointment/${row._id}`}
+                <StyledTableCell colSpan={2}>Appointment Id</StyledTableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {requestedAppointments.map((row) => (
+                <StyledTableRow style={{ textAlign: "left" }} key={row._id}>
+                  <StyledTableCell>
+                    <Avatar alt="img" src={row.requestedBy.profilePhoto} />
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {row.requestedBy.firstName} {row.requestedBy.lastName}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {row.requestedFor.firstName} {row.requestedFor.lastName}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {convertToDate(row.appointmentDate)}
+                  </StyledTableCell>
+                  <StyledTableCell>{row.appointmentTime}</StyledTableCell>
+                  <StyledTableCell>{row.status}</StyledTableCell>
+                  <StyledTableCell>
+                    <Tooltip
+                      title={row.status === "pending" ? "PENDING" : "REJECTED"}
                     >
-                      <OpenInFullIcon
-                        color="primary"
+                      <span>
+                        <Button>
+                          {row.status === "pending" && (
+                            <HelpIcon color="primary"></HelpIcon>
+                          )}
+                          {row.status === "rejected" && (
+                            <CancelIcon color="error"></CancelIcon>
+                          )}
+                        </Button>
+                      </span>
+                    </Tooltip>
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    {row._id}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    <Tooltip title="click for more information">
+                      <Button
                         size="small"
-                      ></OpenInFullIcon>
-                    </Button>
-                  </Tooltip>
-                </StyledTableCell>
-              </StyledTableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                        component={Link}
+                        to={`/request/appointment/${row._id}`}
+                      >
+                        <OpenInFullIcon
+                          color="primary"
+                          size="small"
+                        ></OpenInFullIcon>
+                      </Button>
+                    </Tooltip>
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Fragment>
   );
 };

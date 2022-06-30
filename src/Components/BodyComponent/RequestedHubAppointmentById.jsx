@@ -9,71 +9,74 @@ import Button from "@mui/material/Button";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
 import Tooltip from "@mui/material/Tooltip";
-
-import PropTypes from "prop-types";
-import { styled } from "@mui/material/styles";
 import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
 import DialogActions from "@mui/material/DialogActions";
-import IconButton from "@mui/material/IconButton";
-import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
-const BootstrapDialog = styled(Dialog)(({ theme }) => ({
-  "& .MuiDialogContent-root": {
-    padding: theme.spacing(2),
-  },
-  "& .MuiDialogActions-root": {
-    padding: theme.spacing(1),
-  },
-}));
-
-const BootstrapDialogTitle = (props) => {
-  const { children, onClose, ...other } = props;
-
-  return (
-    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
-      {children}
-      {onClose ? (
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{
-            position: "absolute",
-            right: 8,
-            top: 8,
-            color: (theme) => theme.palette.grey[500],
-          }}
-        >
-          <CloseIcon />
-        </IconButton>
-      ) : null}
-    </DialogTitle>
-  );
-};
-
-BootstrapDialogTitle.propTypes = {
-  children: PropTypes.node,
-  onClose: PropTypes.func.isRequired,
-};
-
-const RequestedHubAppointmentById = ({ match }) => {
+const RequestedHubAppointmentById = ({ match, history }) => {
   const [values, setValues] = useState({
     appointmentByIdInfo: {},
-    open: false,
+    approveDialogOpen: false,
+    rejectDialogOpen: false,
     loading: true,
+    approveButtonLoad: false,
+    rejectButtonLoad: false,
   });
+
+  const {
+    appointmentByIdInfo,
+    loading,
+    approveDialogOpen,
+    rejectDialogOpen,
+    approveButtonLoad,
+    rejectButtonLoad,
+  } = values;
+
   const token = getCookie("token");
   const appointmentId = match.params.appointmentId;
 
-  const { appointmentByIdInfo, loading, open } = values;
-
-  const handleClickOpen = () => {
-    setValues({ ...values, open: true });
+  function handleRejectClickOpen() {
+    setValues({ ...values, rejectDialogOpen: true });
+  }
+  function handleRejectClose() {
+    setValues({ ...values, rejectDialogOpen: false });
+  }
+  const handleApproveClickOpen = () => {
+    setValues({ ...values, approveDialogOpen: true });
   };
-  const handleClose = () => {
-    setValues({ ...values, open: false });
+  const handleApproveClose = () => {
+    setValues({ ...values, approveDialogOpen: false });
+  };
+
+  const rejectAppointmentRequest = () => {
+    setValues({ ...values, rejectButtonLoad: true });
+    axios({
+      method: "PUT",
+      url: `${process.env.REACT_APP_API}/request-appointment/${appointmentId}`,
+      headers: { Authorization: `Bearer ${token}` },
+      data: {
+        status: "rejected",
+      },
+    })
+      .then((response) => {
+        setValues({
+          ...values,
+          rejectButtonLoad: false,
+        });
+        history.push("/request/appointment");
+        handleApproveClose();
+        handleRejectClose();
+        console.log(response);
+      })
+      .catch((err) => {
+        setValues({
+          ...values,
+          rejectButtonLoad: false,
+        });
+        console.log(err);
+      });
   };
 
   const getRequestedAppointmentInfo = () => {
@@ -84,8 +87,6 @@ const RequestedHubAppointmentById = ({ match }) => {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
-        console.log(response);
-        console.log(response.data);
         setValues({
           ...values,
           appointmentByIdInfo: response.data,
@@ -141,9 +142,9 @@ const RequestedHubAppointmentById = ({ match }) => {
                   disabled={
                     appointmentByIdInfo.status === "rejected" ? true : false
                   }
-                  onClick={handleClickOpen}
+                  onClick={handleApproveClickOpen}
                 >
-                  Approve<CheckCircleIcon></CheckCircleIcon>
+                  Approve<CheckCircleIcon></CheckCircleIcon>{" "}
                 </Button>
               </span>
             </Tooltip>
@@ -161,38 +162,55 @@ const RequestedHubAppointmentById = ({ match }) => {
                   disabled={
                     appointmentByIdInfo.status === "rejected" ? true : false
                   }
-                  onClick={handleClickOpen}
+                  onClick={handleRejectClickOpen}
                 >
                   Reject<CancelIcon></CancelIcon>
                 </Button>
               </span>
             </Tooltip>
           </Stack>
-          <BootstrapDialog
-            onClose={handleClose}
-            aria-labelledby="customized-dialog-title"
-            open={open}
+          <Dialog
+            open={approveDialogOpen}
+            onClose={handleApproveClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
           >
-            <BootstrapDialogTitle
-              id="customized-dialog-title"
-              onClose={handleClose}
-            >
-              Confirm Request
-            </BootstrapDialogTitle>
-            <DialogContent dividers>
-              <Typography gutterBottom>
-                Are you sure you want to submit the request?
-              </Typography>
+            <DialogTitle id="alert-dialog-title">
+              Appointment request confirmation
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure you want to approve the request?
+              </DialogContentText>
             </DialogContent>
             <DialogActions>
-              <Button autoFocus onClick={handleClose}>
-                Cancel
-              </Button>
-              <Button autoFocus onClick={handleClose}>
-                Confirm
+              <Button onClick={handleApproveClose}>Cancel</Button>
+              <Button onClick={handleApproveClose} autoFocus>
+                Submit
               </Button>
             </DialogActions>
-          </BootstrapDialog>
+          </Dialog>
+          <Dialog
+            open={rejectDialogOpen}
+            onClose={handleRejectClose}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+          >
+            <DialogTitle id="alert-dialog-title">
+              Appointment request confirmation
+            </DialogTitle>
+            <DialogContent>
+              <DialogContentText id="alert-dialog-description">
+                Are you sure want to reject the appointment request?
+              </DialogContentText>
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleRejectClose}>Cancel</Button>
+              <Button onClick={rejectAppointmentRequest} autoFocus>
+                Submit
+              </Button>
+            </DialogActions>
+          </Dialog>
         </Fragment>
       )}
     </Fragment>
