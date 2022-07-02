@@ -12,7 +12,8 @@ import {
 import { useStyles } from "../HeaderStyle";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { isAuth } from "../../../Common/helpers";
+import { isAuth, signout } from "../../../Common/helpers";
+import { Link, withRouter } from "react-router-dom";
 
 const Profile = ({ history }) => {
   const classes = useStyles();
@@ -56,21 +57,37 @@ const Profile = ({ history }) => {
         placement="bottom-start"
       >
         <List dense={true} className={classes.dropdownlist}>
-          {dropDownData.map((item, i) => (
+          <Link to="/profile" style={{ textDecoration: "none" }}>
             <ListItem
-              key={i}
               component={Button}
               onClick={handleClose}
               className={classes.listItem}
             >
-              <ListItemAvatar>{item.icon}</ListItemAvatar>
-              <ListItemText primary={item.label}></ListItemText>
+              <ListItemAvatar>
+                <AccountCircleIcon></AccountCircleIcon>
+              </ListItemAvatar>
+              <ListItemText primary="Profile"></ListItemText>
             </ListItem>
-          ))}
+          </Link>
+
+          <ListItem
+            component={Button}
+            onClick={() => {
+              signout(() => {
+                history.push("/");
+              });
+            }}
+            className={classes.listItem}
+          >
+            <ListItemAvatar>
+              <ExitToAppIcon></ExitToAppIcon>
+            </ListItemAvatar>
+            <ListItemText primary="Logout"></ListItemText>
+          </ListItem>
         </List>
       </Menu>
     </Fragment>
   );
 };
 
-export default Profile;
+export default withRouter(Profile);

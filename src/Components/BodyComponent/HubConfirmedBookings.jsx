@@ -18,6 +18,7 @@ import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import CircularProgress from "@mui/material/CircularProgress";
+import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -44,31 +45,34 @@ const tableHeadStyle = {
   minWidth: 700,
 };
 
-const RequestedHubAppointments = () => {
+const HubConfirmedBookings = () => {
   const [values, setValues] = useState({
-    requestedAppointments: [],
+    confirmedAppointments: [],
     loading: false,
   });
-  const { requestedAppointments, loading } = values;
+  const { confirmedAppointments, loading } = values;
   const token = getCookie("token");
 
-  const getRequestedAppointments = () => {
+  const getConfirmedAppointments = () => {
     setValues({ ...values, loading: true });
     axios({
       method: "GET",
-      url: `${process.env.REACT_APP_API}/request-appointment`,
+      url: `${process.env.REACT_APP_API}/hub/bookings`,
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
         setValues({
           ...values,
-          requestedAppointments: response.data.appointments,
+          confirmedAppointments: response.data.confirmedBookings,
           loading: false,
         });
       })
       .catch((error) => {
         setValues({ ...values, loading: false });
-        console.log("Appointments Info ERROR", error.response.data.error);
+        console.log(
+          "Confirmed Appointments Info ERROR",
+          error.response.data.error
+        );
       });
   };
   const convertToDate = (str) => {
@@ -79,7 +83,7 @@ const RequestedHubAppointments = () => {
   };
 
   useEffect(() => {
-    getRequestedAppointments();
+    getConfirmedAppointments();
   }, []);
 
   return (
@@ -109,7 +113,7 @@ const RequestedHubAppointments = () => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {requestedAppointments.map((row) => (
+              {confirmedAppointments.map((row) => (
                 <StyledTableRow style={{ textAlign: "left" }} key={row._id}>
                   <StyledTableCell>
                     <Avatar alt="img" src={row.requestedBy.profilePhoto} />
@@ -126,16 +130,11 @@ const RequestedHubAppointments = () => {
                   <StyledTableCell>{row.appointmentTime}</StyledTableCell>
                   <StyledTableCell>{row.status}</StyledTableCell>
                   <StyledTableCell>
-                    <Tooltip
-                      title={row.status === "pending" ? "PENDING" : "REJECTED"}
-                    >
+                    <Tooltip title={row.status === "active" && "ACTIVE"}>
                       <span>
                         <Button>
-                          {row.status === "pending" && (
-                            <HelpIcon color="primary"></HelpIcon>
-                          )}
-                          {row.status === "rejected" && (
-                            <CancelIcon color="error"></CancelIcon>
+                          {row.status === "active" && (
+                            <NotificationsActiveIcon color="success"></NotificationsActiveIcon>
                           )}
                         </Button>
                       </span>
@@ -145,11 +144,11 @@ const RequestedHubAppointments = () => {
                     {row._id}
                   </StyledTableCell>
                   <StyledTableCell>
-                    <Tooltip title="click for more information">
+                    <Tooltip title="Click for more information">
                       <Button
                         size="small"
                         component={Link}
-                        to={`/request/appointment/${row._id}`}
+                        to={`/confirmedBookings/${row._id}`}
                       >
                         <OpenInFullIcon
                           color="primary"
@@ -168,4 +167,4 @@ const RequestedHubAppointments = () => {
   );
 };
 
-export default RequestedHubAppointments;
+export default HubConfirmedBookings;

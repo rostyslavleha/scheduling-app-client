@@ -4,8 +4,6 @@ import { Route, Switch } from "react-router-dom";
 import { useStyles } from "./HeaderStyle";
 import NavbarComponent from "./NavbarComponent";
 import SideNav from "./SideNav";
-import BlogPost from "../BodyComponent/BlogPost";
-import Dashboard from "../BodyComponent/Dashboard";
 import UserProfile from "../BodyComponent/UserProfile";
 import Availability from "../BodyComponent/Availability";
 import RequestedHubAppointments from "../BodyComponent/RequestedHubAppointments";
@@ -22,6 +20,8 @@ import UpdateStory from "../BodyComponent/AdminComponents/UpdateStory";
 import UserRoute from "../BodyComponent/Auth/UserRoute";
 import AdminRoute from "../BodyComponent/Auth/AdminRoute";
 import RequestedHubAppointmentById from "../BodyComponent/RequestedHubAppointmentById";
+import HubConfirmedBookings from "../BodyComponent/HubConfirmedBookings";
+import ConfirmedAppointmentInfoById from "../BodyComponent/ConfirmedAppointmentInfoById";
 
 export default function HeaderComponent() {
   const classes = useStyles();
@@ -57,8 +57,6 @@ export default function HeaderComponent() {
             handleDrawerClose={handleDrawerClose}
             handleDrawerToggle={handleDrawerToggle}
           />
-          <Route exact path="/dashboard" component={Dashboard} />
-          <Route exact path="/blog" component={BlogPost} />
           <UserRoute exact path="/profile" component={UserProfile}></UserRoute>
           <UserRoute
             exact
@@ -74,6 +72,16 @@ export default function HeaderComponent() {
             exact
             path="/request/appointment/:appointmentId"
             component={RequestedHubAppointmentById}
+          ></UserRoute>
+          <UserRoute
+            exact
+            path="/confirmedBookings"
+            component={HubConfirmedBookings}
+          ></UserRoute>
+          <UserRoute
+            exact
+            path="/confirmedBookings/:appointmentId"
+            component={ConfirmedAppointmentInfoById}
           ></UserRoute>
           <AdminRoute
             exact

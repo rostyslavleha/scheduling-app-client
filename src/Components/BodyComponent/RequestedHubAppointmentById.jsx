@@ -78,6 +78,34 @@ const RequestedHubAppointmentById = ({ match, history }) => {
         console.log(err);
       });
   };
+  const approveAppointmentRequest = () => {
+    setValues({ ...values, approveButtonLoad: true });
+    axios({
+      method: "PUT",
+      url: `${process.env.REACT_APP_API}/request-appointment/${appointmentId}`,
+      headers: { Authorization: `Bearer ${token}` },
+      data: {
+        status: "accepted",
+      },
+    })
+      .then((response) => {
+        setValues({
+          ...values,
+          approveButtonLoad: false,
+        });
+        history.push("/confirmedBookings");
+        handleApproveClose();
+        handleRejectClose();
+        console.log(response);
+      })
+      .catch((err) => {
+        setValues({
+          ...values,
+          approveButtonLoad: false,
+        });
+        console.log(err);
+      });
+  };
 
   const getRequestedAppointmentInfo = () => {
     setValues({ ...values, loading: true });
@@ -185,7 +213,7 @@ const RequestedHubAppointmentById = ({ match, history }) => {
             </DialogContent>
             <DialogActions>
               <Button onClick={handleApproveClose}>Cancel</Button>
-              <Button onClick={handleApproveClose} autoFocus>
+              <Button onClick={approveAppointmentRequest} autoFocus>
                 Submit
               </Button>
             </DialogActions>

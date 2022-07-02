@@ -8,31 +8,18 @@ import {
 } from "@mui/material";
 import { NavLink } from "react-router-dom";
 import { useStyles } from "./HeaderStyle";
-import DashboardIcon from "@mui/icons-material/Dashboard";
-import BookIcon from "@mui/icons-material/Book";
 import PersonIcon from "@mui/icons-material/Person";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import AutoStoriesIcon from "@mui/icons-material/AutoStories";
 import GroupIcon from "@mui/icons-material/Group";
 import AddCardIcon from "@mui/icons-material/AddCard";
+import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { isAuth } from "../../Common/helpers";
 
 const SideNavData = ({ handleDrawerClose }) => {
   const classes = useStyles();
   const listItemData = [
-    {
-      label: "Dashboard",
-      link: "/dashboard",
-      icon: <DashboardIcon />,
-      access: ["hub"],
-    },
-    {
-      label: "Blog Post",
-      link: "/blog",
-      icon: <BookIcon />,
-      access: ["hub"],
-    },
     {
       label: "Profile",
       link: "/profile",
@@ -74,6 +61,12 @@ const SideNavData = ({ handleDrawerClose }) => {
       link: "clinician",
       icon: <GroupIcon />,
       access: ["admin", "spoke"],
+    },
+    {
+      label: "Confirmed Bookings",
+      link: "/confirmedBookings",
+      icon: <CalendarTodayIcon />,
+      access: ["hub"],
     },
   ];
 
