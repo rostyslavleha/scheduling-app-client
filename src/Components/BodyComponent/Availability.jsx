@@ -120,8 +120,8 @@ export default function Availability() {
           ? setRight(availabilityByDate.sort())
           : setRight([]);
 
-        let leftSlotsAvailable = generatedTimeSlots.filter(function (el) {
-          return !availabilityByDate.includes(el);
+        let leftSlotsAvailable = generatedTimeSlots.filter(function (slot) {
+          return !availabilityByDate.includes(slot);
         });
         setLeft(leftSlotsAvailable.sort());
       })

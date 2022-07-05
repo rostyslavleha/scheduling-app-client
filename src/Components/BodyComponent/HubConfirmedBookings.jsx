@@ -108,7 +108,7 @@ const HubConfirmedBookings = () => {
                   Appointment Status
                 </StyledTableCell>
                 <StyledTableCell colSpan={2}>
-                  Appointment request Id
+                  Appointment confirmation Id
                 </StyledTableCell>
               </TableRow>
             </TableHead>

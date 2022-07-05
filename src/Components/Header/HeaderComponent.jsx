@@ -18,10 +18,14 @@ import Stories from "../BodyComponent/AdminComponents/Stories";
 import NewStory from "../BodyComponent/AdminComponents/NewStory";
 import UpdateStory from "../BodyComponent/AdminComponents/UpdateStory";
 import UserRoute from "../BodyComponent/Auth/UserRoute";
+import HubRoute from "../BodyComponent/Auth/HubRoute";
+import SpokeRoute from "../BodyComponent/Auth/SpokeRoute";
 import AdminRoute from "../BodyComponent/Auth/AdminRoute";
 import RequestedHubAppointmentById from "../BodyComponent/RequestedHubAppointmentById";
 import HubConfirmedBookings from "../BodyComponent/HubConfirmedBookings";
 import ConfirmedAppointmentInfoById from "../BodyComponent/ConfirmedAppointmentInfoById";
+import RequestedSpokeAppointments from "../BodyComponent/SpokeComponents/RequestedSpokeAppointments";
+import SpokeConfirmedBookings from "../BodyComponent/SpokeComponents/SpokeConfirmedBookings";
 
 export default function HeaderComponent() {
   const classes = useStyles();
@@ -58,31 +62,41 @@ export default function HeaderComponent() {
             handleDrawerToggle={handleDrawerToggle}
           />
           <UserRoute exact path="/profile" component={UserProfile}></UserRoute>
-          <UserRoute
+          <HubRoute
             exact
             path="/availability"
             component={Availability}
-          ></UserRoute>
-          <UserRoute
+          ></HubRoute>
+          <HubRoute
             exact
             path="/request/appointment"
             component={RequestedHubAppointments}
-          ></UserRoute>
-          <UserRoute
+          ></HubRoute>
+          <HubRoute
             exact
             path="/request/appointment/:appointmentId"
             component={RequestedHubAppointmentById}
-          ></UserRoute>
-          <UserRoute
+          ></HubRoute>
+          <HubRoute
             exact
             path="/confirmedBookings"
             component={HubConfirmedBookings}
-          ></UserRoute>
-          <UserRoute
+          ></HubRoute>
+          <HubRoute
             exact
             path="/confirmedBookings/:appointmentId"
             component={ConfirmedAppointmentInfoById}
-          ></UserRoute>
+          ></HubRoute>
+          <SpokeRoute
+            exact
+            path="/spoke/request/bookings"
+            component={RequestedSpokeAppointments}
+          ></SpokeRoute>
+          <SpokeRoute
+            exact
+            path="/spoke/confirmedBookings"
+            component={SpokeConfirmedBookings}
+          ></SpokeRoute>
           <AdminRoute
             exact
             path="/admin/profile"

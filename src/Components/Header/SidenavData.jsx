@@ -68,6 +68,18 @@ const SideNavData = ({ handleDrawerClose }) => {
       icon: <CalendarTodayIcon />,
       access: ["hub"],
     },
+    {
+      label: "Requested Bookings",
+      link: "/spoke/request/bookings",
+      icon: <CalendarMonthIcon />,
+      access: ["spoke"],
+    },
+    {
+      label: "Confirmed Bookings",
+      link: "/spoke/confirmedBookings",
+      icon: <CalendarTodayIcon />,
+      access: ["spoke"],
+    },
   ];
 
   return (

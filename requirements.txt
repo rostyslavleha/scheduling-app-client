@@ -1,0 +1,1 @@
+1) Add confirmed appointments slot time in the availability page
