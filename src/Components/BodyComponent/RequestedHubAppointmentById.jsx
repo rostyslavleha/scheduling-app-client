@@ -68,7 +68,6 @@ const RequestedHubAppointmentById = ({ match, history }) => {
         history.push("/request/appointment");
         handleApproveClose();
         handleRejectClose();
-        console.log(response);
       })
       .catch((err) => {
         setValues({
@@ -93,10 +92,9 @@ const RequestedHubAppointmentById = ({ match, history }) => {
           ...values,
           approveButtonLoad: false,
         });
-        history.push("/confirmedBookings");
+        history.push("/hub/confirmedBookings");
         handleApproveClose();
         handleRejectClose();
-        console.log(response);
       })
       .catch((err) => {
         setValues({

@@ -310,7 +310,7 @@ export default function Availability() {
         alignItems="flex-end"
       >
         <Button
-          variant="outlined"
+          variant="contained"
           color="primary"
           sx={{ height: 40 }}
           onClick={updateAvailability}

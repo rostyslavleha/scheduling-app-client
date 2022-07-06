@@ -10,8 +10,6 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import HelpIcon from "@mui/icons-material/Help";
-import CancelIcon from "@mui/icons-material/Cancel";
 import { Link } from "react-router-dom";
 import Button from "@mui/material/Button";
 import OpenInFullIcon from "@mui/icons-material/OpenInFull";
@@ -57,7 +55,7 @@ const HubConfirmedBookings = () => {
     setValues({ ...values, loading: true });
     axios({
       method: "GET",
-      url: `${process.env.REACT_APP_API}/hub/bookings`,
+      url: `${process.env.REACT_APP_API}/confirmed-appointments`,
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
@@ -89,8 +87,8 @@ const HubConfirmedBookings = () => {
   return (
     <Fragment>
       <NavBreadCrumb
-        path="/request/appointment"
-        name="/requested/Appointments"
+        path="/hub/confirmedBookings"
+        name="/hub/confirmedBookings"
       ></NavBreadCrumb>{" "}
       {loading ? (
         <CircularProgress></CircularProgress>

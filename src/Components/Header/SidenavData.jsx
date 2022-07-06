@@ -64,7 +64,7 @@ const SideNavData = ({ handleDrawerClose }) => {
     },
     {
       label: "Confirmed Bookings",
-      link: "/confirmedBookings",
+      link: "/hub/confirmedBookings",
       icon: <CalendarTodayIcon />,
       access: ["hub"],
     },
