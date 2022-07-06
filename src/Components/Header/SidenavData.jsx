@@ -39,7 +39,7 @@ const SideNavData = ({ handleDrawerClose }) => {
       access: ["hub"],
     },
     {
-      label: "Requested Appointments",
+      label: "Requests",
       link: "/request/appointment",
       icon: <CalendarMonthIcon />,
       access: ["hub"],
@@ -57,25 +57,25 @@ const SideNavData = ({ handleDrawerClose }) => {
       access: ["admin"],
     },
     {
-      label: "Clinicians",
-      link: "clinician",
-      icon: <GroupIcon />,
-      access: ["admin", "spoke"],
-    },
-    {
-      label: "Confirmed Bookings",
+      label: "APPOINTMENTS",
       link: "/hub/confirmedBookings",
       icon: <CalendarTodayIcon />,
       access: ["hub"],
     },
     {
-      label: "Requested Bookings",
+      label: "Clinicians",
+      link: "/clinicians",
+      icon: <GroupIcon />,
+      access: ["spoke"],
+    },
+    {
+      label: "Requests",
       link: "/spoke/request/bookings",
       icon: <CalendarMonthIcon />,
       access: ["spoke"],
     },
     {
-      label: "Confirmed Bookings",
+      label: "APPOINTMENTS",
       link: "/spoke/confirmedBookings",
       icon: <CalendarTodayIcon />,
       access: ["spoke"],

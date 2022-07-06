@@ -8,6 +8,7 @@ import UserProfile from "../BodyComponent/UserProfile";
 import Availability from "../BodyComponent/Availability";
 import RequestedHubAppointments from "../BodyComponent/RequestedHubAppointments";
 import AdminProfile from "../BodyComponent/AdminProfile";
+import SearchClinicians from "../BodyComponent/SearchClinicians";
 import Landing from "../BodyComponent/Auth/Landing";
 import ForgotPassword from "../BodyComponent/Auth/ForgotPassword";
 import ResetPassword from "../BodyComponent/Auth/ResetPassword";
@@ -86,6 +87,11 @@ export default function HeaderComponent() {
             exact
             path="/confirmedBookings/:appointmentId"
             component={ConfirmedAppointmentInfoById}
+          ></UserRoute>
+          <UserRoute
+            exact
+            path="/clinicians"
+            component={SearchClinicians}
           ></UserRoute>
           <SpokeRoute
             exact

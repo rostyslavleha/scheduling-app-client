@@ -20,6 +20,8 @@ import { isAuth, getCookie } from "../../Common/helpers";
 import CircularProgress from "@mui/material/CircularProgress";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import Tooltip from "@mui/material/Tooltip";
 
 const not = (a, b) => {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -33,6 +35,7 @@ export default function Availability() {
   const [checked, setChecked] = useState([]);
   const [left, setLeft] = useState([]);
   const [right, setRight] = useState([]);
+  const [bookedSlots, setBookedSlots] = useState([]);
   const [appointmentDate, setAppointmentDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
 
@@ -109,13 +112,17 @@ export default function Availability() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
+        console.log(response);
         let availabilityByDate = [];
+        let confirmedSlots = [];
         response.data.availableSlots.length === 0
           ? setLeft(generatedTimeSlots) && setRight([])
           : response.data.availableSlots[0].availability.slots.map((slot) => {
+              slot.isAvailable === false && confirmedSlots.push(slot.time);
               availabilityByDate.push(slot.time);
             });
-
+        console.log(confirmedSlots);
+        confirmedSlots.length > 0 && setBookedSlots(confirmedSlots);
         availabilityByDate.length > 0
           ? setRight(availabilityByDate.sort())
           : setRight([]);
@@ -213,6 +220,13 @@ export default function Availability() {
                     id={labelId}
                     primary={`${value} [${tConv24(value)}]`}
                   />
+                  {bookedSlots.length > 0 && bookedSlots.includes(value) && (
+                    <Tooltip
+                      title={`You already have a booking at ${value}. Are you sure want to make changes?`}
+                    >
+                      <CheckCircleIcon color="success"></CheckCircleIcon>
+                    </Tooltip>
+                  )}
                 </ListItem>
               );
             })
