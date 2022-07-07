@@ -1,23 +1,27 @@
 import React, { useEffect, useState, Fragment } from "react";
-import NavBreadCrumb from "./NavBreadCrumb";
 import axios from "axios";
-import { getCookie } from "../../Common/helpers";
 import { styled } from "@mui/material/styles";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell, { tableCellClasses } from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
+import { Link } from "react-router-dom";
+import {
+  Backdrop,
+  CircularProgress,
+  Tooltip,
+  Avatar,
+  Button,
+  Paper,
+  Table,
+  TableBody,
+  TableRow,
+  TableHead,
+  TableContainer,
+  tableCellClasses,
+  TableCell,
+} from "@mui/material";
+import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import HelpIcon from "@mui/icons-material/Help";
 import CancelIcon from "@mui/icons-material/Cancel";
-import { Link } from "react-router-dom";
-import Button from "@mui/material/Button";
-import OpenInFullIcon from "@mui/icons-material/OpenInFull";
-import Avatar from "@mui/material/Avatar";
-import Tooltip from "@mui/material/Tooltip";
-import CircularProgress from "@mui/material/CircularProgress";
+import NavBreadCrumb from "./NavBreadCrumb";
+import { getCookie } from "../../Common/helpers";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -89,7 +93,12 @@ const RequestedHubAppointments = () => {
         name="/requested/Appointments"
       ></NavBreadCrumb>{" "}
       {loading ? (
-        <CircularProgress></CircularProgress>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={loading}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       ) : (
         <TableContainer component={Paper}>
           <Table sx={tableHeadStyle} aria-label="customized table">

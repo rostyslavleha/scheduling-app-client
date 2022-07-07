@@ -1,27 +1,37 @@
-import React, { useEffect, useState, useCallback, Fragment } from "react";
-import { Box } from "@mui/material";
-import NavBreadCrumb from "./NavBreadCrumb";
-import Grid from "@mui/material/Grid";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Checkbox from "@mui/material/Checkbox";
-import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
+import React, { useEffect, useState, Fragment } from "react";
+import moment from "moment";
+import axios from "axios";
 import isWeekend from "date-fns/isWeekend";
-import TextField from "@mui/material/TextField";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import {
+  Box,
+  Grid,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Checkbox,
+  Button,
+  Paper,
+  TextField,
+  CircularProgress,
+  Tooltip,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  useMediaQuery,
+} from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import PendingIcon from "@mui/icons-material/Pending";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
-import moment from "moment";
-import axios from "axios";
 import { isAuth, getCookie } from "../../Common/helpers";
-import CircularProgress from "@mui/material/CircularProgress";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import Tooltip from "@mui/material/Tooltip";
+import { useTheme } from "@mui/material/styles";
+import NavBreadCrumb from "./NavBreadCrumb";
 
 const not = (a, b) => {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -38,6 +48,19 @@ export default function Availability() {
   const [bookedSlots, setBookedSlots] = useState([]);
   const [appointmentDate, setAppointmentDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
+  const [pendingRequestSlots, setPendingRequestSlots] = useState([]);
+
+  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
 
   const leftChecked = intersection(checked, left);
   const rightChecked = intersection(checked, right);
@@ -106,13 +129,13 @@ export default function Availability() {
   const getAvailabilityByDate = () => {
     const clinicianId = isAuth()._id;
     const availabilityDate = convertToDate(appointmentDate);
+    setBookedSlots([]);
     axios({
       method: "GET",
       url: `${process.env.REACT_APP_API}/availability/${clinicianId}/${availabilityDate}`,
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
-        console.log(response);
         let availabilityByDate = [];
         let confirmedSlots = [];
         response.data.availableSlots.length === 0
@@ -121,7 +144,6 @@ export default function Availability() {
               slot.isAvailable === false && confirmedSlots.push(slot.time);
               availabilityByDate.push(slot.time);
             });
-        console.log(confirmedSlots);
         confirmedSlots.length > 0 && setBookedSlots(confirmedSlots);
         availabilityByDate.length > 0
           ? setRight(availabilityByDate.sort())
@@ -137,14 +159,41 @@ export default function Availability() {
       });
   };
 
+  const getPendingRequestsByDate = () => {
+    setPendingRequestSlots([]);
+    const clinicianId = isAuth()._id;
+    const availabilityDate = convertToDate(appointmentDate);
+    axios({
+      method: "GET",
+      url: `${process.env.REACT_APP_API}/pending-requests/${clinicianId}/${availabilityDate}`,
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => {
+        const { data } = response;
+        console.log(data);
+        let timeSlots = [];
+        if (data.pendingAppointmentRequests.length > 0) {
+          data.pendingAppointmentRequests.map((appointmentRequest) => {
+            timeSlots.push(appointmentRequest.appointmentTime);
+          });
+          setPendingRequestSlots(timeSlots);
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   useEffect(() => {
     getAvailabilityByDate();
+    getPendingRequestsByDate();
     // console.log("second", leftSlotsAvailable);
   }, [appointmentDate]);
 
   // Function to update availability
   const updateAvailability = (event) => {
     event.preventDefault();
+    handleDialogClose();
     setLoading(true);
     let data = [];
     for (let i = 0; i < right.length; i++) {
@@ -171,6 +220,7 @@ export default function Availability() {
         .then((response) => {
           setLoading(false);
           console.log("created availability", response);
+          toast.success(response.data.message);
           getAvailabilityByDate();
         })
         .catch((error) => {
@@ -222,11 +272,19 @@ export default function Availability() {
                   />
                   {bookedSlots.length > 0 && bookedSlots.includes(value) && (
                     <Tooltip
-                      title={`You already have a booking at ${value}. Are you sure want to make changes?`}
+                      title={`An appointment is already confirmed at ${value}`}
                     >
                       <CheckCircleIcon color="success"></CheckCircleIcon>
                     </Tooltip>
                   )}
+                  {pendingRequestSlots.length > 0 &&
+                    pendingRequestSlots.includes(value) && (
+                      <Tooltip
+                        title={`There is pending appointment request at ${value}. Please approve or reject the request`}
+                      >
+                        <PendingIcon color="primary"></PendingIcon>
+                      </Tooltip>
+                    )}
                 </ListItem>
               );
             })
@@ -327,13 +385,37 @@ export default function Availability() {
           variant="contained"
           color="primary"
           sx={{ height: 40 }}
-          onClick={updateAvailability}
+          onClick={handleDialogOpen}
         >
           Update
           {loading && (
             <CircularProgress sx={{ ml: 3 }} color="secondary" size={20} />
           )}
         </Button>
+        <Dialog
+          fullScreen={fullScreen}
+          open={dialogOpen}
+          onClose={handleDialogClose}
+          aria-labelledby="responsive-dialog-title"
+        >
+          <DialogTitle id="responsive-dialog-title">
+            {"Update Availability"}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure want to update your availability for{" "}
+              {convertToDate(appointmentDate)} ?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button autoFocus onClick={handleDialogClose}>
+              Cancel
+            </Button>
+            <Button onClick={updateAvailability} autoFocus>
+              Update
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
     </Fragment>
   );

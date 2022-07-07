@@ -5,6 +5,8 @@ import "react-toastify/dist/ReactToastify.min.css";
 import { isAuth, getCookie, signout } from "../../Common/helpers";
 import Box from "@mui/material/Box";
 import NavBreadCrumb from "./NavBreadCrumb";
+import Grid from "@mui/material/Grid";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const UserProfile = ({ history }) => {
   const [values, setValues] = useState({
@@ -49,6 +51,7 @@ const UserProfile = ({ history }) => {
     clinicAddress,
     clinicContact,
     clinicName,
+    aboutClinician,
     clinicRegisteredYear,
     clinicRegistrationNo,
     clinicianProfessionalCourses,
@@ -73,6 +76,7 @@ const UserProfile = ({ history }) => {
   }, []);
 
   const loadUserProfile = () => {
+    setValues({ ...values, loading: true });
     axios({
       method: "GET",
       url: `${process.env.REACT_APP_API}/user/${isAuth()._id}`,
@@ -137,6 +141,7 @@ const UserProfile = ({ history }) => {
           yearOfBirth,
           yearsOfExperience,
           _id,
+          loading: false,
         });
       })
       .catch((error) => {
@@ -151,10 +156,56 @@ const UserProfile = ({ history }) => {
   };
 
   return (
-    <Box mt={2}>
+    <Fragment>
       <NavBreadCrumb path="/profile" name="/Profile"></NavBreadCrumb>
-      {JSON.stringify(values)}
-    </Box>
+      {loading ? (
+        <CircularProgress></CircularProgress>
+      ) : (
+        <Box mt={2} sx={{ flexGrow: 1 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={6} lg={8}>
+              <div>
+                {firstName}
+                {lastName}
+                {title}
+              </div>
+              <img
+                src={profilePhoto}
+                style={{ width: "100px", height: "100px" }}
+              ></img>
+              <div>Experience: {yearsOfExperience}</div>
+              <div>clinicName: {clinicName}</div>
+              <div>{email}</div>
+              <div>{aboutClinician}</div>
+              <div>{yearOfBirth}</div>
+              <div>
+                {clinicAddress.streetAddress}
+                {clinicAddress.city}
+                {clinicAddress.postCode}
+                {clinicAddress.province}
+                {clinicAddress.country}
+              </div>
+              <div>{gender}</div>
+              <div> {affiliatedFrom}</div>
+              <div> {clinicContact}</div>
+              <div> {clinicRegistrationNo}</div>
+              <div> {clinicianProfessionalCourses}</div>
+              <div> {clinicName}</div>
+              <div> {clinicianSpecialization}</div>
+              <div> {clinicianTrainedLocation}</div>
+              <div> Account created on{createdAt}</div>
+              <div> Account Last updated on {updatedAt}</div>
+              <div>{socialMediaHandles.facebook}</div>
+              <div>{socialMediaHandles.twitter}</div>
+              <div>{socialMediaHandles.linkedin}</div>
+              <div>{socialMediaHandles.instagram}</div>
+              <div>userId : {_id}</div>
+            </Grid>
+            <Grid item xs={12} md={6} lg={4}></Grid>
+          </Grid>
+        </Box>
+      )}
+    </Fragment>
   );
 };
 
