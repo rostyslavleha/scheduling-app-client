@@ -1,17 +1,21 @@
 import React, { useState, Fragment } from "react";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
 import { Link, Redirect } from "react-router-dom";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import CssBaseline from "@mui/material/CssBaseline";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+import {
+  Button,
+  TextField,
+  Grid,
+  Box,
+  Typography,
+  Container,
+  CssBaseline,
+  CircularProgress,
+} from "@mui/material";
+
 import { isAuth, authenticate } from "../../../Common/helpers";
-import CircularProgress from "@mui/material/CircularProgress";
 import GoogleAuth from "./GoogleAuth";
 
 const SignIn = ({ history }) => {
@@ -126,7 +130,10 @@ const SignIn = ({ history }) => {
               <Link to="/signup">{"Don't have an account? Sign Up"}</Link>
             </Grid>
           </Grid>
-          <GoogleAuth informParent={informParent}></GoogleAuth>
+          <GoogleAuth
+            informParent={informParent}
+            path="google-login"
+          ></GoogleAuth>
         </Box>
       </Box>
     </Container>

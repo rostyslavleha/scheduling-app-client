@@ -1,22 +1,27 @@
 import React, { useState, Fragment } from "react";
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import { Link, Redirect } from "react-router-dom";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Radio from "@mui/material/Radio";
-import RadioGroup from "@mui/material/RadioGroup";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import CssBaseline from "@mui/material/CssBaseline";
-import FormControlLabel from "@mui/material/FormControlLabel";
+import { Link, Redirect, withRouter } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { isAuth } from "../../../Common/helpers";
-import CircularProgress from "@mui/material/CircularProgress";
 
-export default function SignUp() {
+import {
+  Button,
+  TextField,
+  Grid,
+  Box,
+  Radio,
+  RadioGroup,
+  Typography,
+  Container,
+  CssBaseline,
+  FormControlLabel,
+  CircularProgress,
+} from "@mui/material";
+
+import { isAuth, authenticate } from "../../../Common/helpers";
+import GoogleAuth from "./GoogleAuth";
+
+const SignUp = ({ history }) => {
   const [values, setValues] = useState({
     firstName: "",
     lastName: "",
@@ -39,6 +44,14 @@ export default function SignUp() {
 
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
+  };
+
+  const informParent = async (response) => {
+    await authenticate(response, () => {
+      isAuth() && isAuth().role === "admin"
+        ? history.push("/admin/profile")
+        : history.push("/profile");
+    });
   };
 
   const handleSubmit = (event) => {
@@ -189,6 +202,10 @@ export default function SignUp() {
               <Link to="/signin">Already have an account? Sign in</Link>
             </Grid>
           </Grid>
+          <GoogleAuth
+            informParent={informParent}
+            path="google-register"
+          ></GoogleAuth>
         </Box>
       </Box>
     </Container>
@@ -201,4 +218,6 @@ export default function SignUp() {
       {signupForm()}
     </Fragment>
   );
-}
+};
+
+export default withRouter(SignUp);

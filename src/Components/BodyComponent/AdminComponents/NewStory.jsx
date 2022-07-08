@@ -153,7 +153,7 @@ const NewStory = ({ history }) => {
               </ButtonBase>
             </Grid>
             <Grid item xs={6} sm={3} md={4}>
-              <Button containerElement="label" size="small">
+              <Button containerelement="label" size="small">
                 <input
                   type="file"
                   accept="image/*"
