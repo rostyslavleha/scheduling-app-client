@@ -12,6 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { isAuth, authenticate } from "../../../Common/helpers";
 import CircularProgress from "@mui/material/CircularProgress";
+import GoogleAuth from "./GoogleAuth";
 
 const SignIn = ({ history }) => {
   const [values, setValues] = useState({
@@ -24,6 +25,14 @@ const SignIn = ({ history }) => {
 
   const handleChange = (name) => (event) => {
     setValues({ ...values, [name]: event.target.value });
+  };
+
+  const informParent = (response) => {
+    authenticate(response, () => {
+      isAuth() && isAuth().role === "admin"
+        ? history.push("/admin/profile")
+        : history.push("/profile");
+    });
   };
 
   const handleSubmit = (event) => {
@@ -44,7 +53,6 @@ const SignIn = ({ history }) => {
             password: "",
             loading: false,
           });
-          toast.success(`${response.data.user.firstName} Welcome!`);
           isAuth() && isAuth().role === "admin"
             ? history.push("/admin/profile")
             : history.push("/profile");
@@ -118,6 +126,7 @@ const SignIn = ({ history }) => {
               <Link to="/signup">{"Don't have an account? Sign Up"}</Link>
             </Grid>
           </Grid>
+          <GoogleAuth informParent={informParent}></GoogleAuth>
         </Box>
       </Box>
     </Container>
