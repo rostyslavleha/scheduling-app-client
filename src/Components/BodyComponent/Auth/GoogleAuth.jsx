@@ -40,7 +40,7 @@ const GoogleAuth = ({ informParent, path }) => {
           <Button
             onClick={renderProps.onClick}
             disabled={renderProps.disabled}
-            className="btn btn-danger btn-lg btn-block"
+            sx={{ boxShadow: 2 }}
           >
             <GoogleIcon></GoogleIcon>
           </Button>
