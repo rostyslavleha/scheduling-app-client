@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from "react";
-import { Redirect } from "react-router-dom";
+import { Redirect, Link } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -19,13 +19,12 @@ import {
   CircularProgress,
   Stack,
   IconButton,
-  Link,
   Divider,
+  InputAdornment,
 } from "@mui/material";
 
 import { isAuth, authenticate } from "../../../Common/helpers";
 import GoogleAuth from "./GoogleAuth";
-import { InputAdornment } from "@material-ui/core";
 
 const SignIn = ({ history }) => {
   const [values, setValues] = useState({
@@ -40,14 +39,37 @@ const SignIn = ({ history }) => {
 
   const validate = () => {
     let temp = { ...errors };
-
     temp.email = email ? "" : "Email is required";
     if (email) {
       temp.email = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)
         ? ""
         : "Email is not valid";
     }
-    temp.password = password.length ? "" : "Password is required";
+    const isNonWhiteSpace = /^\S*$/;
+    const isValidLength = /^.{8,16}$/;
+    const isContainsUppercase = /^(?=.*[A-Z]).*$/;
+    const isContainsLowercase = /^(?=.*[a-z]).*$/;
+    const isContainsNumber = /^(?=.*[0-9]).*$/;
+    const isContainsSymbol =
+      /^(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹]).*$/;
+    if (password.length === 0) {
+      temp.password = "Password is required";
+    } else if (!isNonWhiteSpace.test(password)) {
+      temp.password = "Password must not contain any white spaces.";
+    } else if (!isValidLength.test(password)) {
+      temp.password = "Password must be 8-16 Characters Long";
+    } else if (!isContainsUppercase.test(password)) {
+      temp.password = "Password must have at least one Uppercase Character";
+    } else if (!isContainsLowercase.test(password)) {
+      temp.password = "Password must have at least one Lowercase Character";
+    } else if (!isContainsNumber.test(password)) {
+      temp.password = "Password must have at least one digit";
+    } else if (!isContainsSymbol.test(password)) {
+      temp.password = "Password must have at least one special Character";
+    } else {
+      temp.password = "";
+    }
+
     setErrors({ ...temp });
     const isValid =
       email && password && Object.values(temp).every((x) => x === "");
@@ -108,13 +130,13 @@ const SignIn = ({ history }) => {
       <CssBaseline />
       <Box
         sx={{
-          marginTop: "35%",
+          marginTop: 10,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           padding: 1.5,
           border: "0.125rem solid",
-          boxShadow: 12,
+          boxShadow: 10,
           borderRadius: "1.5rem 0 1.5rem 1.5rem",
         }}
       >
@@ -122,7 +144,7 @@ const SignIn = ({ history }) => {
           <img src={Logo} style={{ width: "2.5rem", height: "2.5rem" }} />
           <Typography
             component="h1"
-            variant="h5"
+            variant="h1"
             sx={{ fontWeight: "bold", fontSize: "1.5rem" }}
           >
             LOGIN
@@ -135,14 +157,16 @@ const SignIn = ({ history }) => {
             direction="column"
             justifyContent="center"
           >
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 required
+                fullWidth
                 id="email"
                 label="Email"
                 name="email"
                 placeholder="Enter email address"
                 autoComplete="email"
+                size="small"
                 value={email}
                 onChange={handleChange("email")}
                 sx={{ width: "40ch" }}
@@ -152,7 +176,7 @@ const SignIn = ({ history }) => {
                 })}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={12} sm={6}>
               <TextField
                 required
                 fullWidth
@@ -162,6 +186,7 @@ const SignIn = ({ history }) => {
                 id="password"
                 placeholder="Enter password"
                 autoComplete="new-password"
+                size="small"
                 value={password}
                 onChange={handleChange("password")}
                 sx={{ width: "40ch" }}
@@ -193,7 +218,7 @@ const SignIn = ({ history }) => {
             <Typography>
               <Link
                 style={{ textDecoration: "none" }}
-                href="/auth/password/forgot"
+                to="/auth/password/forgot"
               >
                 Forgot Password?
               </Link>{" "}
@@ -214,7 +239,7 @@ const SignIn = ({ history }) => {
           </Button>
           <Stack direction="row" justifyContent="end" sx={{ mt: 2 }}>
             <Typography>
-              <Link style={{ textDecoration: "none" }} href="/signup">
+              <Link style={{ textDecoration: "none" }} to="/signup">
                 Don't have an account?
               </Link>
             </Typography>
