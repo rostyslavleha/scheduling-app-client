@@ -14,7 +14,7 @@ const Landing = ({ match, history }) => {
               to="/signin"
               style={{ textDecoration: "none", color: "inherit" }}
             >
-              <Button variant="contained" sx={{ mt: 3, mb: 2 }}>
+              <Button variant="contained" sx={{ mt: 2, mb: 2 }}>
                 Login
               </Button>
             </Link>
@@ -24,14 +24,13 @@ const Landing = ({ match, history }) => {
               to="/signup"
               style={{ textDecoration: "none", color: "inherit" }}
             >
-              <Button variant="contained" sx={{ mt: 3, mb: 2 }}>
+              <Button variant="contained" sx={{ mt: 2, mb: 2 }}>
                 Register
               </Button>
             </Link>
           )}
         </div>
       )}
-
       {isAuth() &&
         (isAuth().role === "spoke" ||
           isAuth().role === "hub" ||
@@ -58,12 +57,7 @@ const Landing = ({ match, history }) => {
     </Stack>
   );
 
-  return (
-    <div>
-      <h3>Landing</h3>
-      {landingHeader()}
-    </div>
-  );
+  return <div>{landingHeader()}</div>;
 };
 
 export default withRouter(Landing);

@@ -23,7 +23,10 @@ import {
   DialogContentText,
   DialogTitle,
   useMediaQuery,
+  Stack,
+  Typography,
 } from "@mui/material";
+import UpgradeIcon from "@mui/icons-material/Upgrade";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import PendingIcon from "@mui/icons-material/Pending";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -50,7 +53,7 @@ export default function Availability() {
   const [loading, setLoading] = useState(false);
   const [pendingRequestSlots, setPendingRequestSlots] = useState([]);
 
-  const [dialogOpen, setDialogOpen] = React.useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -246,49 +249,51 @@ export default function Availability() {
   const customList = (items) => (
     <Paper sx={{ width: 300, height: 500, overflow: "auto" }}>
       <List dense component="div" role="list">
-        {items.length > 0
-          ? items.map((value) => {
-              const labelId = `transfer-list-item-${value}-label`;
-              return (
-                <ListItem
-                  key={value}
-                  role="listitem"
-                  button
-                  onClick={handleToggle(value)}
-                >
-                  <ListItemIcon>
-                    <Checkbox
-                      checked={checked.indexOf(value) !== -1}
-                      tabIndex={-1}
-                      disableRipple
-                      inputProps={{
-                        "aria-labelledby": labelId,
-                      }}
-                    />
-                  </ListItemIcon>
-                  <ListItemText
-                    id={labelId}
-                    primary={`${value} [${tConv24(value)}]`}
+        {items.length > 0 ? (
+          items.map((value) => {
+            const labelId = `transfer-list-item-${value}-label`;
+            return (
+              <ListItem
+                key={value}
+                role="listitem"
+                button
+                onClick={handleToggle(value)}
+              >
+                <ListItemIcon>
+                  <Checkbox
+                    checked={checked.indexOf(value) !== -1}
+                    tabIndex={-1}
+                    disableRipple
+                    inputProps={{
+                      "aria-labelledby": labelId,
+                    }}
                   />
-                  {bookedSlots.length > 0 && bookedSlots.includes(value) && (
+                </ListItemIcon>
+                <ListItemText
+                  id={labelId}
+                  primary={`${value} [${tConv24(value)}]`}
+                />
+                {bookedSlots.length > 0 && bookedSlots.includes(value) && (
+                  <Tooltip
+                    title={`An appointment is already confirmed at ${value}`}
+                  >
+                    <CheckCircleIcon color="success"></CheckCircleIcon>
+                  </Tooltip>
+                )}
+                {pendingRequestSlots.length > 0 &&
+                  pendingRequestSlots.includes(value) && (
                     <Tooltip
-                      title={`An appointment is already confirmed at ${value}`}
+                      title={`There is pending appointment request at ${value}. Please approve or reject the request`}
                     >
-                      <CheckCircleIcon color="success"></CheckCircleIcon>
+                      <PendingIcon color="primary"></PendingIcon>
                     </Tooltip>
                   )}
-                  {pendingRequestSlots.length > 0 &&
-                    pendingRequestSlots.includes(value) && (
-                      <Tooltip
-                        title={`There is pending appointment request at ${value}. Please approve or reject the request`}
-                      >
-                        <PendingIcon color="primary"></PendingIcon>
-                      </Tooltip>
-                    )}
-                </ListItem>
-              );
-            })
-          : "No Slots"}
+              </ListItem>
+            );
+          })
+        ) : (
+          <Typography sx={{ fontWeight: "bold" }}>No slots</Typography>
+        )}
 
         <ListItem />
       </List>
@@ -313,83 +318,90 @@ export default function Availability() {
             renderInput={(params) => <TextField {...params} />}
           />
         </LocalizationProvider>
-        <Grid item>
-          <Grid container direction="column" alignItems="center">
-            <Grid sx={{ my: 1 }}>Slots Available</Grid>
-            <Grid sx={{ my: 1 }} item>
-              {customList(left)}
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={2}
+          sx={{
+            m: 3,
+            p: 2,
+            border: "2px solid #1976d2",
+            borderRadius: 5,
+          }}
+        >
+          <Grid item>
+            <Grid container direction="column" alignItems="center">
+              <Grid>
+                <Typography sx={{ fontWeight: "bold", my: 1 }}>
+                  AVAILABLE SLOTS
+                </Typography>
+              </Grid>
+              <Grid item>{customList(left)}</Grid>
             </Grid>
           </Grid>
-        </Grid>
-        <Grid item>
-          <Grid container direction="column" alignItems="center">
-            <Button
-              sx={{ my: 1 }}
-              variant="outlined"
-              size="small"
-              onClick={handleAllRight}
-              disabled={left.length === 0}
-              aria-label="move all right"
-            >
-              ≫
-            </Button>
-            <Button
-              sx={{ my: 1 }}
-              variant="outlined"
-              size="small"
-              onClick={handleCheckedRight}
-              disabled={leftChecked.length === 0}
-              aria-label="move selected right"
-            >
-              &gt;
-            </Button>
-            <Button
-              sx={{ my: 1 }}
-              variant="outlined"
-              size="small"
-              onClick={handleCheckedLeft}
-              disabled={rightChecked.length === 0}
-              aria-label="move selected left"
-            >
-              &lt;
-            </Button>
-            <Button
-              sx={{ my: 2 }}
-              variant="outlined"
-              size="small"
-              onClick={handleAllLeft}
-              disabled={right.length === 0}
-              aria-label="move all left"
-            >
-              ≪
-            </Button>
+          <Grid item>
+            <Grid container direction="column" alignItems="center">
+              <Button
+                sx={{ my: 1 }}
+                variant="contained"
+                size="small"
+                onClick={handleAllRight}
+                disabled={left.length === 0}
+                aria-label="move all right"
+              >
+                ≫
+              </Button>
+              <Button
+                sx={{ my: 1 }}
+                variant="contained"
+                size="small"
+                onClick={handleCheckedRight}
+                disabled={leftChecked.length === 0}
+                aria-label="move selected right"
+              >
+                &gt;
+              </Button>
+              <Button
+                sx={{ my: 1 }}
+                variant="contained"
+                size="small"
+                onClick={handleCheckedLeft}
+                disabled={rightChecked.length === 0}
+                aria-label="move selected left"
+              >
+                &lt;
+              </Button>
+              <Button
+                sx={{ my: 2 }}
+                variant="contained"
+                size="small"
+                onClick={handleAllLeft}
+                disabled={right.length === 0}
+                aria-label="move all left"
+              >
+                ≪
+              </Button>
+            </Grid>
           </Grid>
-        </Grid>
-        <Grid item>
-          <Grid container direction="column" alignItems="center">
-            <Grid sx={{ my: 1 }}>Current Availability</Grid>
-            <Grid sx={{ my: 1 }} item>
-              {customList(right)}
-            </Grid>{" "}
+          <Grid item>
+            <Grid container direction="column" alignItems="center">
+              <Grid>
+                <Typography sx={{ fontWeight: "bold", my: 1 }}>
+                  CURRENT AVAILABILITY
+                </Typography>
+              </Grid>
+              <Grid item>{customList(right)}</Grid>{" "}
+            </Grid>
           </Grid>
-        </Grid>
+        </Stack>
       </Grid>
-      <Box
-        component="span"
-        my={3}
-        display="flex"
-        justifyContent="flex-end"
-        alignItems="flex-end"
-      >
-        <Button
-          variant="contained"
-          color="primary"
-          sx={{ height: 40 }}
-          onClick={handleDialogOpen}
-        >
+      <Box component="span" display="flex" justifyContent="flex-end">
+        <Button variant="contained" color="primary" onClick={handleDialogOpen}>
           Update
-          {loading && (
-            <CircularProgress sx={{ ml: 3 }} color="secondary" size={20} />
+          {loading ? (
+            <CircularProgress sx={{ ml: 2 }} color="secondary" size={20} />
+          ) : (
+            <UpgradeIcon></UpgradeIcon>
           )}
         </Button>
         <Dialog
