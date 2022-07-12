@@ -9,7 +9,6 @@ import {
 } from "@mui/material";
 import { useStyles } from "./HeaderStyle";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import Logo from "../../media/logo.svg";
 import { Link } from "react-router-dom";
 import Profile from "./ActionTab/Profile";
 
@@ -32,7 +31,6 @@ const NavbarComponent = ({ handleDrawerToggle, history }) => {
             />
           </Box>
         </Link>
-
         <Hidden smDown>
           <Box>
             <Profile />

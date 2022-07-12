@@ -145,6 +145,7 @@ const UserProfile = ({ history }) => {
         });
       })
       .catch((error) => {
+        setValues({ ...values, loading: false });
         console.log("User Profile Error", error.response.data.error);
         if (error.response.status === 401) {
           signout(() => {

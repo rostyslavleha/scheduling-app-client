@@ -3,7 +3,6 @@ import axios from "axios";
 import { styled } from "@mui/material/styles";
 import { Link } from "react-router-dom";
 import {
-  Backdrop,
   CircularProgress,
   Tooltip,
   Avatar,
@@ -93,12 +92,7 @@ const RequestedHubAppointments = () => {
         name="/requested/Appointments"
       ></NavBreadCrumb>{" "}
       {loading ? (
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={loading}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
+        <CircularProgress color="inherit" />
       ) : (
         <TableContainer component={Paper}>
           <Table sx={tableHeadStyle} aria-label="customized table">

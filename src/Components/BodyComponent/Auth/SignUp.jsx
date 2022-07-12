@@ -80,9 +80,9 @@ const SignUp = ({ history }) => {
     }
 
     if (lastName.length === 0) {
-      temp.lastName = "First Name is required";
+      temp.lastName = "Last Name is required";
     } else if (!isNameValid.test(lastName)) {
-      temp.lastName = "First Name invalid";
+      temp.lastName = "Last Name invalid";
     } else {
       temp.lastName = "";
     }

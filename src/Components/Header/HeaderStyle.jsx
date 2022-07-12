@@ -1,19 +1,9 @@
 import { makeStyles } from "@material-ui/core";
 import { blue, blueGrey } from "@mui/material/colors";
-// import { styled } from "@mui/material/styles";
 
 export const useStyles = makeStyles((theme) => {
   // console.log(theme.breakpoints);
   return {
-    //common
-    navImg: {
-      width: "35px",
-      height: "35px",
-      borderRadius: "50%",
-      color: "White",
-      backgroundColor: blue["A400"],
-    },
-
     //header
     wrapper: {
       width: "100%",
@@ -45,14 +35,6 @@ export const useStyles = makeStyles((theme) => {
       flexFlow: "row wrap",
     },
 
-    dropdownlist: {
-      maxWidth: "250px",
-    },
-
-    listItem: {
-      textTransform: "capitalize",
-    },
-
     //sidenav
     drawerPaper: {
       width: "250px",
@@ -69,7 +51,9 @@ export const useStyles = makeStyles((theme) => {
         color: blue["A400"],
       },
     },
+
     navButton: { width: "100%", textTransform: "capitalize" },
+
     selectedNav: {
       color: `${blue[800]} !important`,
       fontWeight: " bolder",

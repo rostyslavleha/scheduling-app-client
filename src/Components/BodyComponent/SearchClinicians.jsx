@@ -1,5 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
-import { styled, alpha } from "@mui/material/styles";
+import axios from "axios";
+import { Link as RouterLink } from "react-router-dom";
+
+import { styled } from "@mui/material/styles";
 import {
   ImageList,
   Typography,
@@ -7,11 +10,11 @@ import {
   Box,
   Toolbar,
   Link,
+  CircularProgress,
 } from "@mui/material";
-import { Link as RouterLink } from "react-router-dom";
+
 import SearchIcon from "@mui/icons-material/Search";
 import { getCookie } from "../../Common/helpers";
-import axios from "axios";
 import CardClinicianProfile from "./CardClinicianProfile";
 
 const Search = styled("div")(({ theme }) => ({
@@ -58,23 +61,25 @@ const SearchClinicians = () => {
   const [values, setValues] = useState({
     clinicians: [],
     searchQuery: "",
+    loading: false,
   });
 
-  const { clinicians, searchQuery } = values;
+  const { clinicians, searchQuery, loading } = values;
 
   const token = getCookie("token");
 
   const getHubClinicians = () => {
+    setValues({ ...values, loading: true });
     axios({
       method: "GET",
       url: `${process.env.REACT_APP_API}/clinicians`,
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
-        console.log(response);
-        setValues({ ...values, clinicians: response.data });
+        setValues({ ...values, clinicians: response.data, loading: false });
       })
       .catch((error) => {
+        setValues({ ...values, loading: false });
         console.log("Stories ERROR", error.response.data.error);
       });
   };
@@ -101,46 +106,53 @@ const SearchClinicians = () => {
           />
         </Search>
       </Toolbar>
-      {clinicians && clinicians.length > 0 ? (
-        <ImageList cols={3}>
-          {clinicians
-            .filter((clinician) => {
-              if (searchQuery === "") {
-                return clinician;
-              } else if (
-                clinician.firstName
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase()) ||
-                clinician.lastName
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase()) ||
-                clinician.aboutClinician
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase()) ||
-                clinician.clinicName
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase()) ||
-                clinician.email
-                  .toLowerCase()
-                  .includes(searchQuery.toLowerCase())
-              ) {
-                return clinician;
-              }
-            })
-            .map((clinician, index) => (
-              <Link
-                underline="none"
-                component={RouterLink}
-                to={`/clinicians/${clinician._id}`}
-              >
-                <CardClinicianProfile
-                  clinician={clinician}
-                ></CardClinicianProfile>
-              </Link>
-            ))}
-        </ImageList>
+      {loading ? (
+        <CircularProgress color="inherit" />
       ) : (
-        <Typography></Typography>
+        <Fragment>
+          {clinicians && clinicians.length > 0 ? (
+            <ImageList cols={3}>
+              {clinicians
+                .filter((clinician) => {
+                  if (searchQuery === "") {
+                    return clinician;
+                  } else if (
+                    clinician.firstName
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()) ||
+                    clinician.lastName
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()) ||
+                    clinician.aboutClinician
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()) ||
+                    clinician.clinicName
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase()) ||
+                    clinician.email
+                      .toLowerCase()
+                      .includes(searchQuery.toLowerCase())
+                  ) {
+                    return clinician;
+                  }
+                })
+                .map((clinician, index) => (
+                  <Link
+                    key={index}
+                    underline="none"
+                    component={RouterLink}
+                    to={`/clinicians/${clinician._id}`}
+                  >
+                    <CardClinicianProfile
+                      clinician={clinician}
+                    ></CardClinicianProfile>
+                  </Link>
+                ))}
+            </ImageList>
+          ) : (
+            <Typography></Typography>
+          )}
+        </Fragment>
       )}
     </Box>
   );

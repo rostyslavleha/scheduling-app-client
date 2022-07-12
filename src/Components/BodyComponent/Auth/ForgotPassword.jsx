@@ -55,12 +55,12 @@ const ForgotPassword = () => {
       })
         .then((response) => {
           console.log(" Forgot Password Success", response);
-          toast.success(response.data.message);
           setValues({ ...values, loading: false, email: "" });
+          toast.success(response.data.message);
         })
         .catch((error) => {
           console.log("Forgot Password Failure", error);
-          setValues({ ...values, loading: false });
+          setValues({ ...values, loading: false, email: "" });
           if (error && error.response.data.error) {
             toast.error(error.response.data.error);
           } else {

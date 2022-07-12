@@ -18,14 +18,14 @@ const cardStyle = {
   card: {
     maxWidth: 450,
     mx: 1,
-    border: "1px solid #16609D",
+    border: "1px solid #1976d2",
     borderRadius: 1,
     "&:hover": {
-      boxShadow: 20,
+      boxShadow: 10,
     },
   },
   cardContent: {
-    backgroundColor: "#16609D",
+    backgroundColor: "#1976d2",
   },
   cardContentTypography: {
     color: "#ffffff",
@@ -33,7 +33,7 @@ const cardStyle = {
   cardAvatar: {
     width: 110,
     height: 110,
-    border: "2px solid #16609D",
+    border: "2px solid #1976d2",
   },
   cardContentChip: {
     m: 0.25,
@@ -43,7 +43,6 @@ const cardStyle = {
   },
   clinicianDescription: {
     textAlign: "justify",
-    border: "1px solid #16609D",
     p: 1,
     borderRadius: 1,
     boxShadow: 5,

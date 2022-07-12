@@ -2,21 +2,21 @@ import React, { Fragment } from "react";
 import {
   Badge,
   Button,
+  Divider,
   IconButton,
   List,
   ListItem,
-  ListItemAvatar,
   ListItemText,
   Menu,
+  Stack,
+  Typography,
 } from "@mui/material";
-import { useStyles } from "../HeaderStyle";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { isAuth, signout } from "../../../Common/helpers";
 import { Link, withRouter } from "react-router-dom";
 
 const Profile = ({ history }) => {
-  const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
 
   const handleClick = (event) => {
@@ -26,11 +26,6 @@ const Profile = ({ history }) => {
   const handleClose = (action) => {
     setAnchorEl(null);
   };
-
-  const dropDownData = [
-    { label: "Profile", icon: <AccountCircleIcon /> },
-    { label: "Logout", icon: <ExitToAppIcon /> },
-  ];
 
   return (
     <Fragment>
@@ -44,7 +39,12 @@ const Profile = ({ history }) => {
           <img
             alt={process.env.REACT_APP_DEFAULT_USER_PROFILE_AVATAR}
             src={isAuth().profilePhoto}
-            className={classes.navImg}
+            style={{
+              width: "35px",
+              height: "35px",
+              borderRadius: "50%",
+              color: "white",
+            }}
           />
         </Badge>
       </IconButton>
@@ -56,20 +56,25 @@ const Profile = ({ history }) => {
         onClose={handleClose}
         placement="bottom-start"
       >
-        <List dense={true} className={classes.dropdownlist}>
+        <List dense={true} sx={{ minWidth: "150px", maxWidth: "300px" }}>
+          <ListItem component={Button}>
+            <Typography variant="overline" sx={{ textTransform: "uppercase" }}>
+              {isAuth().firstName} {isAuth().lastName}
+            </Typography>
+          </ListItem>
+          <Divider></Divider>
           <Link to="/profile" style={{ textDecoration: "none" }}>
             <ListItem
               component={Button}
               onClick={handleClose}
-              className={classes.listItem}
+              sx={{ textTransform: "uppercase" }}
             >
-              <ListItemAvatar>
-                <AccountCircleIcon></AccountCircleIcon>
-              </ListItemAvatar>
-              <ListItemText primary="Profile"></ListItemText>
+              <Stack direction="row" alignItems="center">
+                <AccountCircleIcon sx={{ mr: 2 }}></AccountCircleIcon>
+                <ListItemText primary="Profile"></ListItemText>
+              </Stack>
             </ListItem>
           </Link>
-
           <ListItem
             component={Button}
             onClick={() => {
@@ -77,12 +82,12 @@ const Profile = ({ history }) => {
                 history.push("/");
               });
             }}
-            className={classes.listItem}
+            sx={{ textTransform: "uppercase" }}
           >
-            <ListItemAvatar>
-              <ExitToAppIcon></ExitToAppIcon>
-            </ListItemAvatar>
-            <ListItemText primary="Logout"></ListItemText>
+            <Stack direction="row" alignItems="center">
+              <ExitToAppIcon sx={{ mr: 2 }}></ExitToAppIcon>
+              <ListItemText primary="Logout"></ListItemText>
+            </Stack>
           </ListItem>
         </List>
       </Menu>
