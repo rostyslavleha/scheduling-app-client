@@ -5,6 +5,7 @@ import { useStyles } from "./HeaderStyle";
 import NavbarComponent from "./NavbarComponent";
 import SideNav from "./SideNav";
 import UserProfile from "../BodyComponent/UserProfile";
+import EditUserProfile from "../BodyComponent/EditUserProfile";
 import Availability from "../BodyComponent/Availability";
 import RequestedHubAppointments from "../BodyComponent/RequestedHubAppointments";
 import AdminProfile from "../BodyComponent/AdminProfile";
@@ -25,6 +26,7 @@ import AdminRoute from "../BodyComponent/Auth/AdminRoute";
 import RequestedHubAppointmentById from "../BodyComponent/RequestedHubAppointmentById";
 import HubConfirmedBookings from "../BodyComponent/HubConfirmedBookings";
 import ConfirmedAppointmentInfoById from "../BodyComponent/ConfirmedAppointmentInfoById";
+import AppointmentBooking from "../BodyComponent/AppointmentBooking";
 import RequestedSpokeAppointments from "../BodyComponent/SpokeComponents/RequestedSpokeAppointments";
 import SpokeConfirmedBookings from "../BodyComponent/SpokeComponents/SpokeConfirmedBookings";
 
@@ -63,6 +65,11 @@ export default function HeaderComponent() {
             handleDrawerToggle={handleDrawerToggle}
           />
           <UserRoute exact path="/profile" component={UserProfile}></UserRoute>
+          <UserRoute
+            exact
+            path="/edit-profile"
+            component={EditUserProfile}
+          ></UserRoute>
           <HubRoute
             exact
             path="/availability"
@@ -88,11 +95,16 @@ export default function HeaderComponent() {
             path="/confirmedBookings/:appointmentId"
             component={ConfirmedAppointmentInfoById}
           ></UserRoute>
-          <UserRoute
+          <SpokeRoute
             exact
             path="/clinicians"
             component={SearchClinicians}
-          ></UserRoute>
+          ></SpokeRoute>
+          <SpokeRoute
+            exact
+            path="/clinicians/:clinicianId"
+            component={AppointmentBooking}
+          ></SpokeRoute>
           <SpokeRoute
             exact
             path="/spoke/request/bookings"

@@ -6,12 +6,9 @@ import { isAuth, getCookie, signout } from "../../Common/helpers";
 import Box from "@mui/material/Box";
 import NavBreadCrumb from "./NavBreadCrumb";
 import Grid from "@mui/material/Grid";
-import IconButton from "@mui/material/IconButton";
 import CircularProgress from "@mui/material/CircularProgress";
-import EditIcon from "@mui/icons-material/Edit";
-import { Link } from "react-router-dom";
 
-const UserProfile = ({ history }) => {
+const UserEditProfile = ({ history }) => {
   const [values, setValues] = useState({
     firstName: "",
     lastName: "",
@@ -157,7 +154,7 @@ const UserProfile = ({ history }) => {
 
   return (
     <Fragment>
-      <NavBreadCrumb path="/profile" name="/Profile"></NavBreadCrumb>
+      <NavBreadCrumb path="/edit-profile" name="Edit Profile"></NavBreadCrumb>
       {loading ? (
         <CircularProgress></CircularProgress>
       ) : (
@@ -205,9 +202,6 @@ const UserProfile = ({ history }) => {
               <div>username : {username}</div>
             </Grid>
             <Grid item xs={12} md={6} lg={4}></Grid>
-            <IconButton component={Link} to="/edit-profile">
-              <EditIcon></EditIcon>
-            </IconButton>
           </Grid>
         </Box>
       )}
@@ -215,4 +209,4 @@ const UserProfile = ({ history }) => {
   );
 };
 
-export default UserProfile;
+export default UserEditProfile;

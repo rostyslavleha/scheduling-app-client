@@ -27,11 +27,9 @@ const NavbarComponent = ({ handleDrawerToggle, history }) => {
                 height: 40,
               }}
               alt="logo"
-              src={Logo}
+              // src={Logo}
+              src={`${process.env.REACT_APP_LOGO}`}
             />
-            <Typography variant="h6" className={classes.logo}>
-              {"PROMOTE"}
-            </Typography>
           </Box>
         </Link>
 

@@ -39,13 +39,16 @@ export const useStyles = makeStyles((theme) => {
       flexFlow: "row wrap",
       justifyContent: "space-between",
     },
+
     brandBox: {
       display: "flex",
       flexFlow: "row wrap",
     },
+
     dropdownlist: {
       maxWidth: "250px",
     },
+
     listItem: {
       textTransform: "capitalize",
     },
