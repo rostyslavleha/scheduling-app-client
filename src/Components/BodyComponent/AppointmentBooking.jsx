@@ -1,6 +1,6 @@
 import React, { useEffect, useState, Fragment } from "react";
 import axios from "axios";
-import { isAuth, getCookie } from "../../Common/helpers";
+import { isAuth, getCookie, signout } from "../../Common/helpers";
 import NavBreadCrumb from "./NavBreadCrumb";
 import {
   Button,
@@ -16,15 +16,25 @@ import {
   Typography,
   Box,
   Radio,
-  Divider,
+  CircularProgress,
+  Avatar,
+  Chip,
 } from "@mui/material";
+
+import FacebookIcon from "@mui/icons-material/Facebook";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import TwitterIcon from "@mui/icons-material/Twitter";
 
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import isWeekend from "date-fns/isWeekend";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.min.css";
+import MapsMarker from "./MapsMarker";
 
-const AppointmentBooking = ({ match }) => {
+const AppointmentBooking = ({ match, history }) => {
   const [values, setValues] = useState({
     appointmentDate: new Date(),
     availableTimeSlots: [],
@@ -32,6 +42,33 @@ const AppointmentBooking = ({ match }) => {
     patientLastName: "",
     patientEmail: "",
     selectedTimeSlot: "",
+  });
+  const [userValues, setUserValues] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    role: "",
+    aboutClinician: "",
+    affiliatedFrom: "",
+    clinicAddress: {},
+    clinicContact: "",
+    clinicName: "",
+    clinicRegisteredYear: "",
+    clinicRegistrationNo: "",
+    clinicianProfessionalCourses: [],
+    clinicianSpecialization: [],
+    clinicianTrainedLocation: "",
+    createdAt: "",
+    updatedAt: "",
+    gender: "",
+    profilePhoto: "",
+    socialMediaHandles: [],
+    title: "",
+    username: "",
+    yearOfBirth: "",
+    yearsOfExperience: 0,
+    _id: "",
+    loading: false,
   });
   const [errors, setErrors] = useState({});
 
@@ -43,6 +80,35 @@ const AppointmentBooking = ({ match }) => {
     patientEmail,
     selectedTimeSlot,
   } = values;
+
+  const {
+    firstName,
+    lastName,
+    email,
+    loading,
+    role,
+    affiliatedFrom,
+    clinicAddress,
+    clinicContact,
+    clinicName,
+    aboutClinician,
+    clinicRegisteredYear,
+    clinicRegistrationNo,
+    clinicianProfessionalCourses,
+    clinicianSpecialization,
+    clinicianTrainedLocation,
+    createdAt,
+    updatedAt,
+    gender,
+    profilePhoto,
+    socialMediaHandles,
+    title,
+    username,
+    yearOfBirth,
+    yearsOfExperience,
+    _id,
+  } = userValues;
+
   const token = getCookie("token");
 
   const convertToDate = (str) => {
@@ -103,6 +169,90 @@ const AppointmentBooking = ({ match }) => {
     return ts;
   }
 
+  const loadClinicianProfile = () => {
+    const clinicianId = match.params.clinicianId;
+
+    setUserValues({ ...values, loading: true });
+    axios({
+      method: "GET",
+      url: `${process.env.REACT_APP_API}/user/${clinicianId}`,
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        const {
+          firstName,
+          lastName,
+          email,
+          role,
+          password,
+          confirmPassword,
+          aboutClinician,
+          affiliatedFrom,
+          clinicAddress,
+          clinicContact,
+          clinicName,
+          clinicRegisteredYear,
+          clinicRegistrationNo,
+          clinicianProfessionalCourses,
+          clinicianSpecialization,
+          clinicianTrainedLocation,
+          createdAt,
+          updatedAt,
+          gender,
+          profilePhoto,
+          socialMediaHandles,
+          title,
+          username,
+          yearOfBirth,
+          yearsOfExperience,
+          _id,
+        } = response.data;
+        setUserValues({
+          ...values,
+          firstName,
+          lastName,
+          email,
+          role,
+          gender,
+          password,
+          confirmPassword,
+          aboutClinician,
+          affiliatedFrom,
+          clinicAddress,
+          clinicContact,
+          clinicName,
+          clinicRegisteredYear,
+          clinicRegistrationNo,
+          clinicianProfessionalCourses,
+          clinicianSpecialization,
+          clinicianTrainedLocation,
+          createdAt,
+          updatedAt,
+          profilePhoto,
+          socialMediaHandles,
+          title,
+          username,
+          yearOfBirth,
+          yearsOfExperience,
+          _id,
+          loading: false,
+        });
+      })
+      .catch((error) => {
+        setUserValues({ ...values, loading: false });
+        console.log("User Profile Error", error.response.data.error);
+        if (error.response.status === 401) {
+          signout(() => {
+            history.push("/");
+          });
+        }
+        toast.error(error.response.data.error);
+      });
+  };
+
   const getAvailabilityByDate = () => {
     const clinicianId = match.params.clinicianId;
     const availabilityDate = convertToDate(appointmentDate);
@@ -130,9 +280,39 @@ const AppointmentBooking = ({ match }) => {
       });
   };
 
+  const handleSubmit = (event) => {
+    console.log("handleSubmit");
+    event.preventDefault();
+    if (validate()) {
+      axios({
+        method: "POST",
+        url: `${process.env.REACT_APP_API}/availability`,
+        headers: { Authorization: `Bearer ${token}` },
+        data: {},
+      })
+        .then((response) => {
+          console.log("created availability", response);
+          toast.success(response.data.message);
+          getAvailabilityByDate();
+        })
+        .catch((error) => {
+          console.log("Availability ERROR", error);
+        });
+    }
+  };
+
+  const openInNewTab = (url) => {
+    const newWindow = window.open(url, "_blank", "noopener,noreferrer");
+    if (newWindow) newWindow.opener = null;
+  };
+
   useEffect(() => {
     getAvailabilityByDate();
   }, [appointmentDate]);
+
+  useEffect(() => {
+    loadClinicianProfile();
+  }, []);
 
   console.log("selected Date", appointmentDate);
 
@@ -142,14 +322,347 @@ const AppointmentBooking = ({ match }) => {
         path={`/clinicians/${match.params.clinicianId}`}
         name="Book Appointment"
       ></NavBreadCrumb>
-      <Stack direction="row">
-        <Grid container spacing={2}>
+      <Stack direction="row" sx={{ mt: 1 }}>
+        <Grid container spacing={1}>
           <Grid item xs={6}>
-            'User profile'
+            {loading ? (
+              <CircularProgress></CircularProgress>
+            ) : (
+              <Fragment>
+                <Box sx={{ backgroundColor: "#FFFFFF" }}>
+                  <Stack direction="row" justifyContent="center">
+                    <ListSubheader>
+                      <Typography variant="h6" color="text.primary">
+                        {title}.{firstName.toUpperCase()}
+                        {lastName.toUpperCase()} ({gender})
+                      </Typography>
+                    </ListSubheader>
+                  </Stack>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <Stack
+                        direction="column"
+                        alignItems="center"
+                        sx={{ p: 1 }}
+                      >
+                        {profilePhoto && (
+                          <Avatar
+                            src={profilePhoto}
+                            alt="no-image"
+                            sx={{
+                              height: 100,
+                              width: 100,
+                              border: "2px solid #1976d2",
+                            }}
+                          />
+                        )}
+                        <List
+                          dense
+                          sx={{
+                            width: "100%",
+                            maxWidth: 360,
+                            bgcolor: "background.paper",
+                            border: "1px solid #1976d2",
+                            borderRadius: "5px",
+                            mt: 1,
+                          }}
+                          component="nav"
+                          aria-label="mailbox folders"
+                        >
+                          <ListItem button divider>
+                            <ListItemText
+                              primary={
+                                <Typography
+                                  variant="overline"
+                                  color="text.primary"
+                                >{`${email}`}</Typography>
+                              }
+                            />
+                          </ListItem>
+                          <ListItem button divider>
+                            <ListItemText
+                              primary={
+                                <Typography
+                                  variant="overline"
+                                  color="text.primary"
+                                >{`Contact: ${clinicContact}`}</Typography>
+                              }
+                            />
+                          </ListItem>
+                          <ListItem
+                            divider
+                            button
+                            secondaryAction={
+                              <Typography>{yearsOfExperience}</Typography>
+                            }
+                          >
+                            <ListItemText
+                              primary={
+                                <Typography variant="overline">
+                                  Years of Experience:
+                                </Typography>
+                              }
+                            />
+                          </ListItem>
+                          <ListItem
+                            button
+                            divider
+                            secondaryAction={
+                              <Typography>{affiliatedFrom}</Typography>
+                            }
+                          >
+                            <ListItemText
+                              primary={
+                                <Typography variant="overline">
+                                  Affiliation:
+                                </Typography>
+                              }
+                            />
+                          </ListItem>
+                          <ListItem
+                            button
+                            secondaryAction={
+                              <Typography>
+                                {clinicianTrainedLocation}
+                              </Typography>
+                            }
+                          >
+                            <ListItemText
+                              primary={
+                                <Typography variant="overline">
+                                  Trained Location:
+                                </Typography>
+                              }
+                            />
+                          </ListItem>
+                        </List>
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Stack
+                        direction="column"
+                        alignItems="center"
+                        sx={{ p: 1 }}
+                      >
+                        <Box
+                          sx={{
+                            textAlign: "justify",
+                            p: 1,
+                            boxShadow: 5,
+                          }}
+                        >
+                          {aboutClinician}
+                        </Box>
+                        <Box sx={{ mt: 1 }}>
+                          <Typography
+                            variant="overline"
+                            sx={{ fontWeight: 600 }}
+                          >
+                            specialization
+                          </Typography>
+                          <Typography>
+                            {clinicianSpecialization.length > 0 ? (
+                              clinicianSpecialization.map(
+                                (specialization, key) => (
+                                  <Chip
+                                    sx={{ m: 0.25 }}
+                                    key={specialization}
+                                    label={specialization}
+                                  ></Chip>
+                                )
+                              )
+                            ) : (
+                              <Typography
+                                variant="caption"
+                                display="block"
+                                gutterBottom
+                              >
+                                No specialization mentioned by clinician.
+                              </Typography>
+                            )}
+                          </Typography>
+                          <Typography
+                            variant="overline"
+                            sx={{ fontWeight: 600 }}
+                          >
+                            Professional Courses
+                          </Typography>
+                          <Typography>
+                            {clinicianProfessionalCourses.length > 0 ? (
+                              clinicianProfessionalCourses.map(
+                                (course, key) => (
+                                  <Chip
+                                    sx={{ m: 0.25 }}
+                                    key={course}
+                                    label={course}
+                                  ></Chip>
+                                )
+                              )
+                            ) : (
+                              <Typography
+                                variant="caption"
+                                display="block"
+                                gutterBottom
+                              >
+                                No courses mentioned by clinician.
+                              </Typography>
+                            )}
+                          </Typography>
+                        </Box>
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{
+                          m: 1,
+                        }}
+                      >
+                        <Button
+                          onClick={() =>
+                            openInNewTab(`${socialMediaHandles.facebook}`)
+                          }
+                          variant="contained"
+                        >
+                          <FacebookIcon></FacebookIcon>
+                          Facebook
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            openInNewTab(`${socialMediaHandles.instagram}`)
+                          }
+                          variant="contained"
+                        >
+                          <InstagramIcon></InstagramIcon>
+                          Instagram
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            openInNewTab(`${socialMediaHandles.linkedin}`)
+                          }
+                          variant="contained"
+                        >
+                          <LinkedInIcon></LinkedInIcon> LinkedIn
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            openInNewTab(`${socialMediaHandles.twitter}`)
+                          }
+                          variant="contained"
+                        >
+                          <TwitterIcon></TwitterIcon>Twitter
+                        </Button>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </Box>
+                <Box sx={{ mt: 1, bgcolor: "background.paper" }}>
+                  <Stack direction="row" justifyContent="center">
+                    <ListSubheader>
+                      <Typography variant="overline">
+                        CLINIC INFORMATION
+                      </Typography>
+                    </ListSubheader>
+                  </Stack>
+                  <Grid container>
+                    <Grid item xs={6}>
+                      <Stack
+                        sx={{ p: 1 }}
+                        direction="column"
+                        alignItems="center"
+                      >
+                        <List
+                          dense
+                          sx={{
+                            width: "100%",
+                            maxWidth: 360,
+                            bgcolor: "background.paper",
+                            border: "1px solid #1976d2",
+                            borderRadius: "5px",
+                          }}
+                          component="nav"
+                          aria-label="mailbox folders"
+                        >
+                          <ListItem
+                            divider
+                            button
+                            secondaryAction={
+                              <Typography>{clinicName}</Typography>
+                            }
+                          >
+                            <ListItemText
+                              primary={
+                                <Typography variant="overline">
+                                  Clinic Name:
+                                </Typography>
+                              }
+                            />
+                          </ListItem>
+                          <ListItem
+                            button
+                            divider
+                            secondaryAction={
+                              <Typography>{clinicRegisteredYear}</Typography>
+                            }
+                          >
+                            <ListItemText
+                              primary={
+                                <Typography variant="overline">
+                                  Registered Year:
+                                </Typography>
+                              }
+                            />
+                          </ListItem>
+                          <ListItem
+                            button
+                            secondaryAction={
+                              <Typography>{clinicRegistrationNo}</Typography>
+                            }
+                          >
+                            <ListItemText
+                              primary={
+                                <Typography variant="overline">
+                                  registration No:
+                                </Typography>
+                              }
+                            />
+                          </ListItem>
+                        </List>
+                      </Stack>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Stack sx={{ p: 1 }}>
+                        <Box
+                          sx={{
+                            p: 1,
+                            border: "1px solid #1976d2",
+                            borderRadius: "5px",
+                          }}
+                        >
+                          <ListSubheader>
+                            <Typography variant="overline">Address</Typography>
+                          </ListSubheader>
+                          <Typography>{clinicAddress.streetAddress}</Typography>
+                          <Typography>{clinicAddress.city}</Typography>
+                          <Typography>
+                            {clinicAddress.province}, {clinicAddress.postalCode}
+                          </Typography>
+                          <Typography>{clinicAddress.country}</Typography>
+                        </Box>
+                      </Stack>
+                    </Grid>
+                  </Grid>
+                </Box>
+              </Fragment>
+            )}
           </Grid>
           <Grid item xs={3}>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <StaticDatePicker
+                displayStaticWrapperAs="desktop"
+                disablePast
                 openTo="day"
                 shouldDisableDate={isWeekend}
                 value={appointmentDate}
@@ -159,6 +672,7 @@ const AppointmentBooking = ({ match }) => {
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
+            <Box sx={{ mt: 1 }}>{/* <MapsMarker></MapsMarker> */}</Box>
           </Grid>
           <Grid item xs={3}>
             <Stack direction="column">
@@ -213,9 +727,14 @@ const AppointmentBooking = ({ match }) => {
               </List>
               <Box
                 component="form"
-                sx={{ mt: 2, bgcolor: "background.paper", p: 1 }}
+                sx={{ mt: 1, bgcolor: "background.paper", p: 1 }}
               >
                 <Grid item xs={12}>
+                  <ListSubheader>
+                    <Typography variant="overline">
+                      Enter patient information
+                    </Typography>
+                  </ListSubheader>
                   <TextField
                     required
                     fullWidth
@@ -244,7 +763,7 @@ const AppointmentBooking = ({ match }) => {
                     id="patientLastName"
                     placeholder="Enter patient last name"
                     size="small"
-                    value={patientFirstName}
+                    value={patientLastName}
                     sx={{ mt: 1 }}
                     onChange={handleChange("patientLastName")}
                     {...(errors["patientLastName"] && {
@@ -272,8 +791,13 @@ const AppointmentBooking = ({ match }) => {
                     })}
                   ></TextField>
                 </Grid>
-                <Button sx={{ my: 1 }} fullWidth variant="contained">
-                  Book
+                <Button
+                  sx={{ my: 1 }}
+                  fullWidth
+                  variant="contained"
+                  onClick={handleSubmit}
+                >
+                  Book appointment
                 </Button>
               </Box>
             </Stack>
