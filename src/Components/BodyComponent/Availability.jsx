@@ -173,7 +173,7 @@ export default function Availability() {
     })
       .then((response) => {
         const { data } = response;
-        console.log(data);
+        // console.log(data);
         let timeSlots = [];
         if (data.pendingAppointmentRequests.length > 0) {
           data.pendingAppointmentRequests.map((appointmentRequest) => {
@@ -222,7 +222,7 @@ export default function Availability() {
       })
         .then((response) => {
           setLoading(false);
-          console.log("created availability", response);
+          // console.log("created availability", response);
           toast.success(response.data.message);
           getAvailabilityByDate();
         })

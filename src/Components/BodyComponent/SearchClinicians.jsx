@@ -93,7 +93,7 @@ const SearchClinicians = () => {
   }, []);
 
   return (
-    <Box sx={{ flexGrow: 1 }}>
+    <Box>
       <Toolbar sx={{ p: "0 !important" }}>
         <Search>
           <SearchIconWrapper>

@@ -21,11 +21,6 @@ import {
   Chip,
 } from "@mui/material";
 
-import FacebookIcon from "@mui/icons-material/Facebook";
-import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import InstagramIcon from "@mui/icons-material/Instagram";
-import TwitterIcon from "@mui/icons-material/Twitter";
-
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
@@ -33,6 +28,10 @@ import isWeekend from "date-fns/isWeekend";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
 import MapsMarker from "./MapsMarker";
+import facebookSvg from "../../media/facebook.svg";
+import twitterSvg from "../../media/twitter.svg";
+import linkedinSvg from "../../media/linkedin.svg";
+import instagramSvg from "../../media/instagram.svg";
 
 const AppointmentBooking = ({ match, history }) => {
   const [values, setValues] = useState({
@@ -42,6 +41,7 @@ const AppointmentBooking = ({ match, history }) => {
     patientLastName: "",
     patientEmail: "",
     selectedTimeSlot: "",
+    bookAppointmentLoad: false,
   });
   const [userValues, setUserValues] = useState({
     firstName: "",
@@ -79,6 +79,7 @@ const AppointmentBooking = ({ match, history }) => {
     patientLastName,
     patientEmail,
     selectedTimeSlot,
+    bookAppointmentLoad,
   } = values;
 
   const {
@@ -181,7 +182,6 @@ const AppointmentBooking = ({ match, history }) => {
       },
     })
       .then((response) => {
-        console.log(response);
         const {
           firstName,
           lastName,
@@ -263,7 +263,6 @@ const AppointmentBooking = ({ match, history }) => {
     })
       .then((response) => {
         let availableTimeSlotsByDate = [];
-        console.log(response.data);
         response.data.availableSlots.length === 0
           ? setValues({
               ...values,
@@ -281,21 +280,45 @@ const AppointmentBooking = ({ match, history }) => {
   };
 
   const handleSubmit = (event) => {
-    console.log("handleSubmit");
     event.preventDefault();
     if (validate()) {
+      setValues({ ...values, bookAppointmentLoad: true });
       axios({
         method: "POST",
-        url: `${process.env.REACT_APP_API}/availability`,
+        url: `${process.env.REACT_APP_API}/request-appointment`,
         headers: { Authorization: `Bearer ${token}` },
-        data: {},
+        data: {
+          requestedBy: isAuth()._id,
+          requestedTo: match.params.clinicianId,
+          appointmentStatus: "pending",
+          appointmentTime: selectedTimeSlot,
+          appointmentDate: convertToDate(appointmentDate),
+          patientEmail: patientEmail,
+          patientFirstName: patientFirstName,
+          patientLastName: patientLastName,
+        },
       })
         .then((response) => {
-          console.log("created availability", response);
+          console.log("Appointment confirmed", response);
           toast.success(response.data.message);
-          getAvailabilityByDate();
+          setValues({
+            ...values,
+            patientFirstName: "",
+            selectedTimeSlot: "",
+            patientLastName: "",
+            patientEmail: "",
+            bookAppointmentLoad: false,
+          });
         })
         .catch((error) => {
+          setValues({
+            ...values,
+            patientFirstName: "",
+            selectedTimeSlot: "",
+            patientLastName: "",
+            patientEmail: "",
+            bookAppointmentLoad: false,
+          });
           console.log("Availability ERROR", error);
         });
     }
@@ -314,14 +337,13 @@ const AppointmentBooking = ({ match, history }) => {
     loadClinicianProfile();
   }, []);
 
-  console.log("selected Date", appointmentDate);
-
   return (
     <Fragment>
       <NavBreadCrumb
         path={`/clinicians/${match.params.clinicianId}`}
         name="Book Appointment"
       ></NavBreadCrumb>
+      <ToastContainer></ToastContainer>
       <Stack direction="row" sx={{ mt: 1 }}>
         <Grid container spacing={1}>
           <Grid item xs={6}>
@@ -330,9 +352,17 @@ const AppointmentBooking = ({ match, history }) => {
             ) : (
               <Fragment>
                 <Box sx={{ backgroundColor: "#FFFFFF" }}>
-                  <Stack direction="row" justifyContent="center">
-                    <ListSubheader>
-                      <Typography variant="h6" color="text.primary">
+                  <Stack
+                    direction="row"
+                    justifyContent="center"
+                    sx={{ backgroundColor: "#1976d2" }}
+                  >
+                    <ListSubheader sx={{ backgroundColor: "#1976d2" }}>
+                      <Typography
+                        variant="h6"
+                        color="text.primary"
+                        sx={{ color: "#FFFFFF" }}
+                      >
                         {title}.{firstName.toUpperCase()}
                         {lastName.toUpperCase()} ({gender})
                       </Typography>
@@ -437,6 +467,46 @@ const AppointmentBooking = ({ match, history }) => {
                           </ListItem>
                         </List>
                       </Stack>
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                        sx={{ p: 1 }}
+                      >
+                        <Button
+                          onClick={() =>
+                            openInNewTab(`${socialMediaHandles.facebook}`)
+                          }
+                          variant="outlined"
+                        >
+                          <img width={30} height={30} src={facebookSvg}></img>
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            openInNewTab(`${socialMediaHandles.instagram}`)
+                          }
+                          variant="outlined"
+                        >
+                          <img width={30} height={30} src={instagramSvg}></img>{" "}
+                        </Button>
+                        <Button
+                          onClick={() =>
+                            openInNewTab(`${socialMediaHandles.linkedin}`)
+                          }
+                          variant="outlined"
+                        >
+                          <img width={30} height={30} src={linkedinSvg}></img>
+                        </Button>
+                        <Button
+                          size="small"
+                          onClick={() =>
+                            openInNewTab(`${socialMediaHandles.twitter}`)
+                          }
+                          variant="outlined"
+                        >
+                          <img width={30} height={30} src={twitterSvg}></img>
+                        </Button>
+                      </Stack>
                     </Grid>
                     <Grid item xs={6}>
                       <Stack
@@ -449,6 +519,7 @@ const AppointmentBooking = ({ match, history }) => {
                             textAlign: "justify",
                             p: 1,
                             boxShadow: 5,
+                            minHeight: 240,
                           }}
                         >
                           {aboutClinician}
@@ -509,51 +580,6 @@ const AppointmentBooking = ({ match, history }) => {
                             )}
                           </Typography>
                         </Box>
-                      </Stack>
-                    </Grid>
-                    <Grid item xs={12}>
-                      <Stack
-                        direction="row"
-                        justifyContent="space-between"
-                        alignItems="center"
-                        sx={{
-                          m: 1,
-                        }}
-                      >
-                        <Button
-                          onClick={() =>
-                            openInNewTab(`${socialMediaHandles.facebook}`)
-                          }
-                          variant="contained"
-                        >
-                          <FacebookIcon></FacebookIcon>
-                          Facebook
-                        </Button>
-                        <Button
-                          onClick={() =>
-                            openInNewTab(`${socialMediaHandles.instagram}`)
-                          }
-                          variant="contained"
-                        >
-                          <InstagramIcon></InstagramIcon>
-                          Instagram
-                        </Button>
-                        <Button
-                          onClick={() =>
-                            openInNewTab(`${socialMediaHandles.linkedin}`)
-                          }
-                          variant="contained"
-                        >
-                          <LinkedInIcon></LinkedInIcon> LinkedIn
-                        </Button>
-                        <Button
-                          onClick={() =>
-                            openInNewTab(`${socialMediaHandles.twitter}`)
-                          }
-                          variant="contained"
-                        >
-                          <TwitterIcon></TwitterIcon>Twitter
-                        </Button>
                       </Stack>
                     </Grid>
                   </Grid>
@@ -642,7 +668,9 @@ const AppointmentBooking = ({ match, history }) => {
                           }}
                         >
                           <ListSubheader>
-                            <Typography variant="overline">Address</Typography>
+                            <Typography variant="overline">
+                              Clinic Address
+                            </Typography>
                           </ListSubheader>
                           <Typography>{clinicAddress.streetAddress}</Typography>
                           <Typography>{clinicAddress.city}</Typography>
@@ -798,6 +826,13 @@ const AppointmentBooking = ({ match, history }) => {
                   onClick={handleSubmit}
                 >
                   Book appointment
+                  {bookAppointmentLoad ? (
+                    <CircularProgress
+                      sx={{ ml: 2 }}
+                      color="secondary"
+                      size={20}
+                    />
+                  ) : null}
                 </Button>
               </Box>
             </Stack>

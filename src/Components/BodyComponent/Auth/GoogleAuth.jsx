@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import GoogleIcon from "@mui/icons-material/Google";
+import googleSvg from "../../../media/google.svg";
 
 import { Button } from "@mui/material";
 
@@ -42,7 +43,8 @@ const GoogleAuth = ({ informParent, path }) => {
             disabled={renderProps.disabled}
             sx={{ boxShadow: 2 }}
           >
-            <GoogleIcon></GoogleIcon>
+            {/* <GoogleIcon></GoogleIcon> */}
+            <img height={30} width={30} src={googleSvg}></img>
           </Button>
         )}
         cookiePolicy={"single_host_origin"}
