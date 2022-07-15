@@ -34,7 +34,7 @@ const UserProfile = ({ history }) => {
     socialMediaHandles: [],
     title: "",
     username: "",
-    yearOfBirth: "",
+    dateOfBirth: "",
     yearsOfExperience: 0,
     _id: "",
     loading: false,
@@ -63,7 +63,7 @@ const UserProfile = ({ history }) => {
     socialMediaHandles,
     title,
     username,
-    yearOfBirth,
+    dateOfBirth,
     yearsOfExperience,
     _id,
   } = values;
@@ -109,7 +109,7 @@ const UserProfile = ({ history }) => {
           socialMediaHandles,
           title,
           username,
-          yearOfBirth,
+          dateOfBirth,
           yearsOfExperience,
           _id,
         } = response.data;
@@ -138,7 +138,7 @@ const UserProfile = ({ history }) => {
           socialMediaHandles,
           title,
           username,
-          yearOfBirth,
+          dateOfBirth,
           yearsOfExperience,
           _id,
           loading: false,
@@ -178,9 +178,10 @@ const UserProfile = ({ history }) => {
               <div>clinicName: {clinicName}</div>
               <div>{email}</div>
               <div>{aboutClinician}</div>
-              <div>{yearOfBirth}</div>
+              <div>{dateOfBirth}</div>
               <div>
-                {clinicAddress.streetAddress}
+                {clinicAddress.address1}
+                {clinicAddress.address2}
                 {clinicAddress.city}
                 {clinicAddress.postCode}
                 {clinicAddress.province}

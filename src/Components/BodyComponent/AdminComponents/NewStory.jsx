@@ -14,7 +14,6 @@ import Container from "@mui/material/Container";
 import NavBreadCrumb from "../NavBreadCrumb";
 import ButtonBase from "@mui/material/ButtonBase";
 import ImageListItem from "@mui/material/ImageListItem";
-import storyDefaultImage from "../../../media/storyDefaultImage.png";
 
 const NewStory = ({ history }) => {
   const allInputs = { imgUrl: "" };

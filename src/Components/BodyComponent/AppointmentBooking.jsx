@@ -65,7 +65,7 @@ const AppointmentBooking = ({ match, history }) => {
     socialMediaHandles: [],
     title: "",
     username: "",
-    yearOfBirth: "",
+    dateOfBirth: "",
     yearsOfExperience: 0,
     _id: "",
     loading: false,
@@ -105,7 +105,7 @@ const AppointmentBooking = ({ match, history }) => {
     socialMediaHandles,
     title,
     username,
-    yearOfBirth,
+    dateOfBirth,
     yearsOfExperience,
     _id,
   } = userValues;
@@ -206,7 +206,7 @@ const AppointmentBooking = ({ match, history }) => {
           socialMediaHandles,
           title,
           username,
-          yearOfBirth,
+          dateOfBirth,
           yearsOfExperience,
           _id,
         } = response.data;
@@ -235,7 +235,7 @@ const AppointmentBooking = ({ match, history }) => {
           socialMediaHandles,
           title,
           username,
-          yearOfBirth,
+          dateOfBirth,
           yearsOfExperience,
           _id,
           loading: false,
@@ -672,10 +672,11 @@ const AppointmentBooking = ({ match, history }) => {
                               Clinic Address
                             </Typography>
                           </ListSubheader>
-                          <Typography>{clinicAddress.streetAddress}</Typography>
+                          <Typography>{clinicAddress.address1}</Typography>
+                          <Typography>{clinicAddress.address2}</Typography>
                           <Typography>{clinicAddress.city}</Typography>
                           <Typography>
-                            {clinicAddress.province}, {clinicAddress.postalCode}
+                            {clinicAddress.province} {clinicAddress.postalCode}
                           </Typography>
                           <Typography>{clinicAddress.country}</Typography>
                         </Box>
@@ -700,7 +701,9 @@ const AppointmentBooking = ({ match, history }) => {
                 renderInput={(params) => <TextField {...params} />}
               />
             </LocalizationProvider>
-            <Box sx={{ mt: 1 }}>{/* <MapsMarker></MapsMarker> */}</Box>
+            <Box sx={{ mt: 1 }}>
+              <MapsMarker></MapsMarker>
+            </Box>
           </Grid>
           <Grid item xs={3}>
             <Stack direction="column">
@@ -820,7 +823,7 @@ const AppointmentBooking = ({ match, history }) => {
                   ></TextField>
                 </Grid>
                 <Button
-                  sx={{ my: 1 }}
+                  sx={{ my: 2 }}
                   fullWidth
                   variant="contained"
                   onClick={handleSubmit}
