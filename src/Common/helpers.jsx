@@ -95,3 +95,10 @@ export const updateUserInfo = (response, next) => {
   }
   next();
 };
+
+export const convertToDate = (str) => {
+  var date = new Date(str);
+  var month = ("0" + (date.getMonth() + 1)).slice(-2);
+  var day = ("0" + date.getDate()).slice(-2);
+  return [month, day, date.getFullYear()].join("-");
+};
