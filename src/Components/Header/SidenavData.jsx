@@ -17,7 +17,6 @@ import AddCardIcon from "@mui/icons-material/AddCard";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { isAuth } from "../../Common/helpers";
 import { blue, blueGrey } from "@mui/material/colors";
-import { borderRadius } from "@mui/system";
 
 const SideNavData = ({ handleDrawerClose }) => {
   const classes = useStyles();

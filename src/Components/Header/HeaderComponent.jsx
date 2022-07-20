@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
-import { Box } from "@mui/material";
+import { Box, styled } from "@mui/material";
 import { Route, Switch } from "react-router-dom";
-import { useStyles } from "./HeaderStyle";
 import NavbarComponent from "./NavbarComponent";
 import SideNav from "./SideNav";
 import UserProfile from "../BodyComponent/UserProfile";
@@ -30,8 +29,19 @@ import AppointmentBooking from "../BodyComponent/AppointmentBooking";
 import RequestedSpokeAppointments from "../BodyComponent/SpokeComponents/RequestedSpokeAppointments";
 import SpokeConfirmedBookings from "../BodyComponent/SpokeComponents/SpokeConfirmedBookings";
 
+const StyledBox = styled(Box)(({ theme }) => ({
+  width: "100%",
+  minHeight: "100vh",
+  height: "auto",
+  background: "#efefef",
+  boxSizing: "border-box",
+  padding: "70px 24px 24px 270px",
+  [theme.breakpoints.down("sm")]: {
+    padding: "70px 24px 24px 24px",
+  },
+}));
+
 export default function HeaderComponent() {
-  const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
@@ -57,7 +67,7 @@ export default function HeaderComponent() {
           path="/auth/password/reset/:token"
           component={ResetPassword}
         ></Route>
-        <Box className={classes.wrapper}>
+        <StyledBox>
           <NavbarComponent handleDrawerToggle={handleDrawerToggle} />
           <SideNav
             mobileOpen={mobileOpen}
@@ -135,7 +145,7 @@ export default function HeaderComponent() {
             exact
             component={UpdateStory}
           ></AdminRoute>
-        </Box>
+        </StyledBox>
       </Switch>
     </Fragment>
   );
