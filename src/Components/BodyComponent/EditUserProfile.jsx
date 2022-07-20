@@ -16,14 +16,16 @@ import {
   Stack,
   Avatar,
   Button,
+  Chip,
+  IconButton,
 } from "@mui/material";
-import Chip from "@mui/material/Chip";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import storage from "../../firebase";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import countryList from "react-select-country-list";
+import FileUploadIcon from "@mui/icons-material/FileUpload";
 
 const UserEditProfile = ({ history }) => {
   const ABOUT_CLINICIAN_CHAR_LIMIT = 300;
@@ -422,21 +424,18 @@ const UserEditProfile = ({ history }) => {
                     ref={inputFile}
                   ></input>
                 </Button>
-                <Button
+                <IconButton
                   variant="contained"
                   color="primary"
                   size="small"
                   type="submit"
                 >
-                  update
-                  {profilePhotoUploading && (
-                    <CircularProgress
-                      sx={{ ml: 2 }}
-                      color="inherit"
-                      size={20}
-                    />
+                  {profilePhotoUploading ? (
+                    <CircularProgress color="inherit" size={20} />
+                  ) : (
+                    <FileUploadIcon></FileUploadIcon>
                   )}
-                </Button>
+                </IconButton>
               </Box>
 
               <Stack direction="row" spacing={1} sx={{ mt: 1 }}>

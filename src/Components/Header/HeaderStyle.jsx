@@ -17,42 +17,43 @@ export const useStyles = makeStyles((theme) => {
       },
     },
 
-    logo: {
-      lineHeight: "47px",
-      color: "inherit",
-    },
+    // logo: {
+    //   lineHeight: "47px",
+    //   color: "inherit",
+    // },
 
     // navbar styles
 
-    toolbar: {
-      display: "flex",
-      flexFlow: "row wrap",
-      justifyContent: "space-between",
-    },
+    // toolbar: {
+    //   display: "flex",
+    //   flexFlow: "row wrap",
+    //   justifyContent: "space-between",
+    // },
 
-    brandBox: {
-      display: "flex",
-      flexFlow: "row wrap",
-    },
+    // brandBox: {
+    //   display: "flex",
+    //   flexFlow: "row wrap",
+    // },
 
     //sidenav
     drawerPaper: {
       width: "250px",
       marginTop: "64px",
-      [theme.breakpoints.down("sm")]: {
+      [theme.breakpoints.down("xs")]: {
         marginTop: "0px",
+        display: "none",
       },
     },
 
-    navlink: {
-      color: blueGrey[700],
-      transition: "0.8s",
-      "&:hover  div": {
-        color: blue["A400"],
-      },
-    },
+    // navlink: {
+    //   color: blueGrey[700],
+    //   transition: "0.8s",
+    //   "&:hover  div": {
+    //     color: blue["A400"],
+    //   },
+    // },
 
-    navButton: { width: "100%", textTransform: "capitalize" },
+    // navButton: { width: "100%", textTransform: "capitalize" },
 
     selectedNav: {
       color: `${blue[800]} !important`,
