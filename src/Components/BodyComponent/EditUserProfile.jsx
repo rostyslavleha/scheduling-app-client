@@ -2,12 +2,16 @@ import React, { useState, useEffect, Fragment, useRef, useMemo } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.min.css";
-import { isAuth, getCookie, signout } from "../../Common/helpers";
+import {
+  isAuth,
+  getCookie,
+  signout,
+  updateUserInfo,
+} from "../../Common/helpers";
 import NavBreadCrumb from "./NavBreadCrumb";
 import PropTypes from "prop-types";
 import {
   CircularProgress,
-  Grid,
   Box,
   InputLabel,
   MenuItem,
@@ -22,6 +26,7 @@ import {
   Tabs,
   Tab,
   Typography,
+  InputAdornment,
 } from "@mui/material";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import storage from "../../firebase";
@@ -30,6 +35,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import countryList from "react-select-country-list";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -72,6 +79,10 @@ const UserEditProfile = ({ history }) => {
     lastName: "",
     email: "",
     role: "",
+    newPassword: "",
+    confirmNewPassword: "",
+    showPassword: false,
+    showConfirmPassword: false,
     aboutClinician: "",
     affiliatedFrom: "",
     clinicAddress: {
@@ -143,6 +154,10 @@ const UserEditProfile = ({ history }) => {
     profilePhotoUploading,
     newCourse,
     newSpecialty,
+    newPassword,
+    confirmNewPassword,
+    showPassword,
+    showConfirmPassword,
   } = values;
 
   const token = getCookie("token");
@@ -204,8 +219,6 @@ const UserEditProfile = ({ history }) => {
   ];
 
   const phoneRegex = /^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$/;
-  const postalRegex =
-    /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i;
 
   const handleContact = (value) => {
     return value.replace(phoneRegex, "($1) $2-$3");
@@ -228,6 +241,142 @@ const UserEditProfile = ({ history }) => {
     for (let i = 1950; i <= currentYear; i++) {
       values.yearDropDownValues.push(i);
     }
+  };
+
+  const validate = () => {
+    let temp = { ...errors };
+    const postalRegex =
+      /^[ABCEGHJ-NPRSTVXY]\d[ABCEGHJ-NPRSTV-Z][ -]?\d[ABCEGHJ-NPRSTV-Z]\d$/i;
+    const isNameValid = /^(?=.{1,50}$)[a-z]+(?:['_.\s][a-z]+)*$/i;
+    const isValidURI =
+      /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/;
+
+    if (firstName.length === 0) {
+      temp.firstName = "First Name is required";
+    } else if (!isNameValid.test(firstName)) {
+      temp.firstName = "First Name invalid";
+    } else {
+      temp.firstName = "";
+    }
+
+    if (lastName.length === 0) {
+      temp.lastName = "Last Name is required";
+    } else if (!isNameValid.test(lastName)) {
+      temp.lastName = "Last Name invalid";
+    } else {
+      temp.lastName = "";
+    }
+    const isNonWhiteSpace = /^\S*$/;
+    const isValidLength = /^.{8,16}$/;
+    const isContainsUppercase = /^(?=.*[A-Z]).*$/;
+    const isContainsLowercase = /^(?=.*[a-z]).*$/;
+    const isContainsNumber = /^(?=.*[0-9]).*$/;
+    const isContainsSymbol =
+      /^(?=.*[~`!@#$%^&*()--+={}\[\]|\\:;"'<>,.?/_₹]).*$/;
+    if (newPassword.length > 0) {
+      if (!isNonWhiteSpace.test(newPassword)) {
+        temp.newPassword = "Password must not contain any white spaces.";
+      } else if (!isValidLength.test(newPassword)) {
+        temp.newPassword = "Password must be between 8 and 16 characters";
+      } else if (!isContainsUppercase.test(newPassword)) {
+        temp.newPassword =
+          "Password must contain at least one uppercase letter";
+      } else if (!isContainsLowercase.test(newPassword)) {
+        temp.newPassword =
+          "Password must contain at least one lowercase letter";
+      } else if (!isContainsNumber.test(newPassword)) {
+        temp.newPassword = "Password must contain at least one number";
+      } else if (!isContainsSymbol.test(newPassword)) {
+        temp.newPassword =
+          "Password must contain at least one special character";
+      } else {
+        temp.newPassword = "";
+      }
+    }
+    if (confirmNewPassword.length > 0) {
+      if (!isNonWhiteSpace.test(confirmNewPassword)) {
+        temp.confirmNewPassword = "Password must not contain any white spaces.";
+      } else if (!isValidLength.test(confirmNewPassword)) {
+        temp.confirmNewPassword =
+          "Password must be between 8 and 16 characters";
+      } else if (!isContainsUppercase.test(confirmNewPassword)) {
+        temp.confirmNewPassword =
+          "Password must contain at least one uppercase letter";
+      } else if (!isContainsLowercase.test(confirmNewPassword)) {
+        temp.confirmNewPassword =
+          "Password must contain at least one lowercase letter";
+      } else if (!isContainsNumber.test(confirmNewPassword)) {
+        temp.confirmNewPassword = "Password must contain at least one number";
+      } else if (!isContainsSymbol.test(confirmNewPassword)) {
+        temp.confirmNewPassword =
+          "Password must contain at least one special character";
+      } else {
+        temp.confirmNewPassword = "";
+      }
+    }
+    if (newPassword.length > 0 && confirmNewPassword.length > 0) {
+      if (newPassword !== confirmNewPassword) {
+        temp.confirmNewPassword = "Passwords do not match";
+        temp.newPassword = "Passwords do not match";
+      }
+    }
+    if (clinicAddress.postalCode.length > 0) {
+      if (!postalRegex.test(clinicAddress.postalCode)) {
+        temp.postalCode = "Invalid Postal Code";
+      } else {
+        temp.postalCode = "";
+      }
+    }
+    if (clinicContact.length > 0) {
+      if (clinicContact.length < 10) {
+        temp.clinicContact = "Contact number must be 10 digits";
+      } else if (!phoneRegex.test(clinicContact)) {
+        temp.clinicContact = "Invalid Phone Number";
+      } else {
+        temp.clinicContact = "";
+      }
+    }
+    if (socialMediaHandles.facebook.length > 0) {
+      if (!isValidURI.test(socialMediaHandles.facebook)) {
+        temp.facebookLink = "Enter a valid URI";
+      } else {
+        temp.facebookLink = "";
+      }
+    }
+    if (socialMediaHandles.twitter.length > 0) {
+      if (!isValidURI.test(socialMediaHandles.twitter)) {
+        temp.twitterLink = "Enter a valid URI";
+      } else {
+        temp.twitterLink = "";
+      }
+    }
+    if (socialMediaHandles.instagram.length > 0) {
+      if (!isValidURI.test(socialMediaHandles.instagram)) {
+        temp.instagramLink = "Enter a valid URI";
+      } else {
+        temp.instagramLink = "";
+      }
+    }
+    if (socialMediaHandles.linkedin.length > 0) {
+      if (!isValidURI.test(socialMediaHandles.linkedin)) {
+        temp.linkedInLink = "Enter a valid URI";
+      } else {
+        temp.linkedInLink = "";
+      }
+    }
+
+    setErrors({ ...temp });
+    const isValid =
+      firstName && lastName && Object.values(temp).every((x) => x === "");
+    return isValid;
+  };
+
+  const handlePasswordVisibility = () => {
+    setValues({ ...values, showPassword: !values.showPassword });
+  };
+
+  const handleConfirmPasswordVisibility = () => {
+    setValues({ ...values, showConfirmPassword: !values.showConfirmPassword });
   };
 
   const handleChange = (name) => (event) => {
@@ -259,7 +408,7 @@ const UserEditProfile = ({ history }) => {
       const newSpecialtyList = clinicianSpecialization.concat(newSpecialty);
       setValues({
         ...values,
-        clinicianProfessionalCourses: newSpecialtyList,
+        clinicianSpecialization: newSpecialtyList,
         newSpecialty: "",
       });
     }
@@ -315,8 +464,6 @@ const UserEditProfile = ({ history }) => {
           lastName,
           email,
           role,
-          password,
-          confirmPassword,
           aboutClinician,
           affiliatedFrom,
           clinicAddress,
@@ -345,8 +492,6 @@ const UserEditProfile = ({ history }) => {
           email,
           role,
           gender,
-          password,
-          confirmPassword,
           aboutClinician,
           affiliatedFrom,
           clinicContact,
@@ -388,6 +533,56 @@ const UserEditProfile = ({ history }) => {
       });
   };
 
+  const handleUpdateProfile = (event) => {
+    event.preventDefault();
+    if (validate()) {
+      axios({
+        method: "PUT",
+        url: `${process.env.REACT_APP_API}/user/update`,
+        data: {
+          firstName,
+          lastName,
+          newPassword,
+          confirmNewPassword,
+          clinicContact,
+          aboutClinician,
+          title,
+          gender,
+          clinicAddress,
+          clinicName,
+          clinicRegisteredYear,
+          clinicRegistrationNo,
+          clinicianProfessionalCourses,
+          clinicianSpecialization,
+          socialMediaHandles,
+          clinicianTrainedLocation,
+          affiliatedFrom,
+          dateOfBirth,
+          yearsOfExperience,
+          profilePhoto,
+        },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          console.log("PRIVATE PROFILE UPDATE SUCCESS", response);
+          console.log("to be updated response", response.data);
+          updateUserInfo(response, () => {
+            toast.success("Profile Updated Successfully");
+          });
+        })
+        .catch((error) => {
+          console.log(
+            "PRIVATE PROFILE UPDATE ERROR",
+            error.response.data.errors
+          );
+          toast.error("Profile Update Failed. Please try again");
+          toast.error(error.response.data.errors);
+        });
+    }
+  };
+
   return (
     <Fragment>
       <NavBreadCrumb path="/edit-profile" name="Edit Profile"></NavBreadCrumb>
@@ -413,17 +608,17 @@ const UserEditProfile = ({ history }) => {
               <Tab label="Personal Information" {...a11yProps(0)} />
               <Tab label="Change Password" {...a11yProps(1)} />
               <Tab label="Clinic Information" {...a11yProps(2)} />
-              <Tab label="Skills" {...a11yProps(3)} />
-              <Tab label="Address" {...a11yProps(4)} />
-              <Tab label="Connected accounts" {...a11yProps(5)} />
+              <Tab label="Clinician Skills" {...a11yProps(3)} />
+              <Tab label="Clinic Address" {...a11yProps(4)} />
+              <Tab label="Social Accounts" {...a11yProps(5)} />
             </Tabs>
             <TabPanel variant="scrollable" value={value} index={0}>
               <Typography variant="overline">Basic Information</Typography>
-              <div>AccountID : {_id}</div>
-              <div>Role : {role}</div>
-              <div>Username : {username}</div>
-              <div> Account created on: {Date(createdAt)} </div>
-              <div> Last updated on: {Date(updatedAt)}</div>
+              <Typography>AccountID : {_id}</Typography>
+              <Typography>Role : {role}</Typography>
+              <Typography>Username : {username}</Typography>
+              <Typography> Account created on: {Date(createdAt)} </Typography>
+              <Typography> Last updated on: {Date(updatedAt)}</Typography>
               <Box component="form" noValidate onSubmit={handleFirebaseUpdate}>
                 <Avatar
                   alt={`${firstName} ${lastName}`}
@@ -463,6 +658,7 @@ const UserEditProfile = ({ history }) => {
                     name="title"
                     onChange={handleChange("title")}
                   >
+                    <MenuItem value="">None</MenuItem>
                     <MenuItem value={"Dr"}>Dr</MenuItem>
                     <MenuItem value={"Mr"}>Mr</MenuItem>
                     <MenuItem value={"Mrs"}>Mrs</MenuItem>
@@ -504,255 +700,65 @@ const UserEditProfile = ({ history }) => {
                     helperText: errors["lastName"],
                   })}
                 />
-              </Stack>
-            </TabPanel>
-            <TabPanel value={value} index={1}>
-              Item Two
-            </TabPanel>
-            <TabPanel value={value} index={2}>
-              Item Three
-            </TabPanel>
-            <TabPanel value={value} index={3}>
-              Item Four
-            </TabPanel>
-            <TabPanel value={value} index={4}>
-              Item Five
-            </TabPanel>
-            <TabPanel value={value} index={5}>
-              Item Six
-            </TabPanel>
-          </Box>
-          <Box mt={2} sx={{ flexGrow: 1 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6} lg={8}>
-                <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
-                  <FormControl sx={{ minWidth: 80 }} size="small">
-                    <InputLabel id="demo-experience">Experience</InputLabel>
-                    <Select
-                      labelId="demo-experience"
-                      id="demo-experience"
-                      value={yearsOfExperience}
-                      label="Experience"
-                      name="yearsOfExperience"
-                      onChange={handleChange("yearsOfExperience")}
-                    >
-                      {experienceDropDownValues.map((experience, index) => (
-                        <MenuItem key={index} value={experience}>
-                          {experience}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-
-                  <TextField
-                    required
-                    id="clinicName"
-                    label="Clinic Name"
-                    name="clinicName"
-                    placeholder="Enter clinic name"
-                    size="small"
-                    value={clinicName}
-                    onChange={handleChange("clinicName")}
-                    {...(errors["clinicName"] && {
-                      error: true,
-                      helperText: errors["clinicName"],
-                    })}
-                  />
-                  <TextField
-                    disabled
-                    id="email"
-                    label="Email Address"
-                    name="email"
-                    size="small"
-                    value={email}
-                  />
-                  <TextField
-                    id="aboutClinician"
-                    label="About yourself"
-                    name="aboutClinician"
-                    placeholder="Add something about yourself..."
-                    size="small"
-                    multiline
-                    rows={5}
-                    value={aboutClinician}
-                    sx={{ width: 500 }}
-                    onChange={handleChange("aboutClinician")}
-                    helperText={`${aboutClinician.length}/${ABOUT_CLINICIAN_CHAR_LIMIT}`}
-                    {...(errors["aboutClinician"] && {
-                      error: true,
-                      helperText: errors["aboutClinician"],
-                    })}
-                  />
-                </Stack>
-
-                <Stack direction="row" sx={{ mt: 2 }}>
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <DatePicker
-                      label="Date of Birth"
-                      value={dateOfBirth}
-                      onChange={(newValue) => {
-                        setValues({
-                          ...values,
-                          dateOfBirth: newValue,
-                        });
-                      }}
-                      renderInput={(params) => <TextField {...params} />}
-                    />
-                  </LocalizationProvider>
-                  <TextField
-                    id="address1"
-                    label="address1"
-                    name="address1"
-                    placeholder="Enter Address"
-                    size="small"
-                    value={clinicAddress.address1}
-                    onChange={(e) =>
-                      setValues({
-                        ...values,
-                        clinicAddress: {
-                          ...values.clinicAddress,
-                          address1: e.target.value,
-                        },
-                      })
-                    }
-                    {...(errors["address1"] && {
-                      error: true,
-                      helperText: errors["address1"],
-                    })}
-                  />
-                  <TextField
-                    id="address2"
-                    label="address2"
-                    name="address2"
-                    placeholder="Enter Address"
-                    size="small"
-                    value={clinicAddress.address2}
-                    onChange={(e) =>
-                      setValues({
-                        ...values,
-                        clinicAddress: {
-                          ...values.clinicAddress,
-                          address2: e.target.value,
-                        },
-                      })
-                    }
-                    {...(errors["address2"] && {
-                      error: true,
-                      helperText: errors["address2"],
-                    })}
-                  />
-                  <TextField
-                    id="city"
-                    label="city"
-                    name="city"
-                    placeholder="Enter city"
-                    size="small"
-                    value={clinicAddress.city}
-                    onChange={(e) =>
-                      setValues({
-                        ...values,
-                        clinicAddress: {
-                          ...values.clinicAddress,
-                          city: e.target.value,
-                        },
-                      })
-                    }
-                    {...(errors["city"] && {
-                      error: true,
-                      helperText: errors["city"],
-                    })}
-                  />
-                  <FormControl sx={{ minWidth: 150 }} size="small">
-                    <InputLabel id="demo-country">Country</InputLabel>
-                    <Select
-                      labelId="demo-country"
-                      id="demo-country"
-                      value={clinicAddress.country}
-                      label="country"
-                      name="country"
-                      onChange={(e) =>
-                        setValues({
-                          ...values,
-                          clinicAddress: {
-                            ...values.clinicAddress,
-                            country: e.target.value,
-                          },
-                        })
-                      }
-                    >
-                      {countriesList.map((country, index) => (
-                        <MenuItem key={index} value={country.value}>
-                          {country.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <FormControl sx={{ minWidth: 150 }} size="small">
-                    <InputLabel id="demo-province">Province</InputLabel>
-                    <Select
-                      labelId="demo-province"
-                      id="demo-province"
-                      value={clinicAddress.province}
-                      label="province"
-                      name="province"
-                      onChange={(e) =>
-                        setValues({
-                          ...values,
-                          clinicAddress: {
-                            ...values.clinicAddress,
-                            province: e.target.value,
-                          },
-                        })
-                      }
-                    >
-                      {provincesList.map((province, index) => (
-                        <MenuItem key={index} value={province.value}>
-                          {province.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                  <TextField
-                    id="postalCode"
-                    label="Postal Code"
-                    name="postalCode"
-                    placeholder="Enter postal code"
-                    size="small"
-                    value={clinicAddress.postalCode}
-                    maxLength={6}
-                    onChange={(e) =>
-                      setValues({
-                        ...values,
-                        clinicAddress: {
-                          ...values.clinicAddress,
-                          postalCode: e.target.value,
-                        },
-                      })
-                    }
-                    {...(errors["postalCode"] && {
-                      error: true,
-                      helperText: errors["postalCode"],
-                    })}
-                  />
-                  <TextField
-                    id="clinicContact"
-                    label="Clinic contact"
-                    name="clinicContact"
-                    size="small"
-                    pattern="[0-9]*"
-                    value={handleContact(clinicContact)}
-                    placeholder="(xxx) xxx-xxxx"
-                    maxLength="10"
-                    sx={{ width: 300 }}
-                    onChange={handleChange("clinicContact")}
-                    {...(errors["clinicContact"] && {
-                      error: true,
-                      helperText: errors["clinicContact"],
-                    })}
-                  />
-                </Stack>
                 <FormControl sx={{ minWidth: 80 }} size="small">
-                  <InputLabel id="demo-gender">Title</InputLabel>
+                  <InputLabel id="demo-experience">Experience</InputLabel>
+                  <Select
+                    labelId="demo-experience"
+                    id="demo-experience"
+                    value={yearsOfExperience}
+                    label="Experience"
+                    name="yearsOfExperience"
+                    onChange={handleChange("yearsOfExperience")}
+                  >
+                    {experienceDropDownValues.map((experience, index) => (
+                      <MenuItem key={index} value={experience}>
+                        {experience}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <TextField
+                  disabled
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  size="small"
+                  value={email}
+                />
+              </Stack>
+              <Stack direction="row" spacing={2}>
+                <TextField
+                  id="aboutClinician"
+                  label="About yourself"
+                  name="aboutClinician"
+                  placeholder="Add something about yourself..."
+                  size="small"
+                  multiline
+                  rows={5}
+                  value={aboutClinician}
+                  sx={{ width: 500 }}
+                  onChange={handleChange("aboutClinician")}
+                  helperText={`${aboutClinician.length}/${ABOUT_CLINICIAN_CHAR_LIMIT}`}
+                  {...(errors["aboutClinician"] && {
+                    error: true,
+                    helperText: errors["aboutClinician"],
+                  })}
+                />
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    label="Date of Birth"
+                    value={dateOfBirth}
+                    onChange={(newValue) => {
+                      setValues({
+                        ...values,
+                        dateOfBirth: newValue,
+                      });
+                    }}
+                    renderInput={(params) => <TextField {...params} />}
+                  />
+                </LocalizationProvider>
+                <FormControl sx={{ minWidth: 80 }} size="small">
+                  <InputLabel id="demo-gender">Gender</InputLabel>
                   <Select
                     labelId="demo-gender"
                     id="demo-gender"
@@ -765,95 +771,6 @@ const UserEditProfile = ({ history }) => {
                     <MenuItem value={"female"}>Female</MenuItem>
                   </Select>
                 </FormControl>
-                <Stack direction="row" sx={{ mt: 2 }}>
-                  <TextField
-                    id="clinicRegistrationNo"
-                    label="Clinic registration no"
-                    name="clinicRegistrationNo"
-                    size="small"
-                    value={clinicRegistrationNo}
-                    sx={{ width: 300 }}
-                    onChange={handleChange("clinicRegistrationNo")}
-                    {...(errors["clinicRegistrationNo"] && {
-                      error: true,
-                      helperText: errors["clinicRegistrationNo"],
-                    })}
-                  />
-                  <TextField
-                    id="affiliatedFrom"
-                    label="Affiliated From"
-                    name="affiliatedFrom"
-                    size="small"
-                    placeholder="Enter clinic affiliation name"
-                    value={affiliatedFrom}
-                    sx={{ width: 300 }}
-                    onChange={handleChange("affiliatedFrom")}
-                    {...(errors["affiliatedFrom"] && {
-                      error: true,
-                      helperText: errors["affiliatedFrom"],
-                    })}
-                  />
-                </Stack>
-
-                <TextField
-                  id="newCourse"
-                  label="Professional Courses"
-                  name="newCourse"
-                  size="small"
-                  placeholder="Enter course name"
-                  value={newCourse}
-                  sx={{ width: 300 }}
-                  onChange={handleChange("newCourse")}
-                  onKeyDown={handleAddNewCourse(newCourse)}
-                  {...(errors["newCourse"] && {
-                    error: true,
-                    helperText: errors["newCourse"],
-                  })}
-                />
-
-                {clinicianProfessionalCourses.length > 0
-                  ? clinicianProfessionalCourses.map((course, index) => (
-                      <Chip size="small" key={index} label={course} />
-                    ))
-                  : ""}
-
-                <TextField
-                  id="newSpecialty"
-                  label="Add new specialization"
-                  name="newSpecialty"
-                  size="small"
-                  placeholder="Add new specialization"
-                  value={newSpecialty}
-                  sx={{ width: 300 }}
-                  onChange={handleChange("newSpecialty")}
-                  onKeyDown={handleAddNewSpecialty(newSpecialty)}
-                  {...(errors["newSpecialty"] && {
-                    error: true,
-                    helperText: errors["newSpecialty"],
-                  })}
-                />
-
-                {clinicianSpecialization.length > 0
-                  ? clinicianSpecialization.map((specialty, index) => (
-                      <Chip size="small" key={index} label={specialty} />
-                    ))
-                  : ""}
-
-                <TextField
-                  id="clinicName"
-                  label="Clinic Name"
-                  name="clinicName"
-                  size="small"
-                  placeholder="Enter clinic name"
-                  value={clinicName}
-                  sx={{ width: 300 }}
-                  onChange={handleChange("clinicName")}
-                  {...(errors["clinicName"] && {
-                    error: true,
-                    helperText: errors["clinicName"],
-                  })}
-                />
-
                 <TextField
                   id="clinicianTrainedLocation"
                   label="Clinician Trained Location"
@@ -868,7 +785,355 @@ const UserEditProfile = ({ history }) => {
                     helperText: errors["clinicianTrainedLocation"],
                   })}
                 />
+              </Stack>
+            </TabPanel>
+            <TabPanel value={value} index={1}>
+              <Typography variant="overline">Update Password</Typography>
+              <TextField
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                id="password"
+                placeholder="Enter new password"
+                size="small"
+                autoComplete="new-password"
+                value={newPassword}
+                sx={{ width: "40ch" }}
+                onChange={handleChange("newPassword")}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handlePasswordVisibility}
+                        aria-label="toggle password"
+                        edge="end"
+                      >
+                        {showPassword ? (
+                          <VisibilityOffIcon></VisibilityOffIcon>
+                        ) : (
+                          <VisibilityIcon></VisibilityIcon>
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                {...(errors["newPassword"] && {
+                  error: true,
+                  helperText: errors["newPassword"],
+                })}
+              />
+              <TextField
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type={showConfirmPassword ? "text" : "password"}
+                id="confirmPassword"
+                autoComplete="new-password"
+                placeholder="Confirm new password"
+                size="small"
+                value={confirmNewPassword}
+                sx={{ width: "40ch" }}
+                onChange={handleChange("confirmNewPassword")}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={handleConfirmPasswordVisibility}
+                        aria-label="toggle password"
+                        edge="end"
+                      >
+                        {showConfirmPassword ? (
+                          <VisibilityOffIcon></VisibilityOffIcon>
+                        ) : (
+                          <VisibilityIcon></VisibilityIcon>
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+                {...(errors["confirmNewPassword"] && {
+                  error: true,
+                  helperText: errors["confirmNewPassword"],
+                })}
+              />
+            </TabPanel>
+            <TabPanel value={value} index={2}>
+              <Typography variant="overline">Clinic Information</Typography>
+              <Stack direction="row">
+                <FormControl sx={{ minWidth: 80 }} size="small">
+                  <InputLabel id="demo-registeredYear">
+                    Registered Year
+                  </InputLabel>
+                  <Select
+                    labelId="demo-registeredYear"
+                    id="demo-registeredYear"
+                    value={clinicRegisteredYear}
+                    label="Clinic Registered Year"
+                    name="clinicRegisteredYear"
+                    onChange={handleChange("clinicRegisteredYear")}
+                  >
+                    {yearDropDownValues.map((year, index) => (
+                      <MenuItem key={index} value={year}>
+                        {year}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <TextField
+                  required
+                  id="clinicName"
+                  label="Clinic Name"
+                  name="clinicName"
+                  placeholder="Enter clinic name"
+                  size="small"
+                  value={clinicName}
+                  onChange={handleChange("clinicName")}
+                  {...(errors["clinicName"] && {
+                    error: true,
+                    helperText: errors["clinicName"],
+                  })}
+                />
+                <TextField
+                  id="clinicContact"
+                  label="Clinic contact"
+                  name="clinicContact"
+                  size="small"
+                  pattern="[0-9]*"
+                  value={handleContact(clinicContact)}
+                  placeholder="(xxx) xxx-xxxx"
+                  maxLength="10"
+                  minLength="10"
+                  sx={{ width: 300 }}
+                  onChange={handleChange("clinicContact")}
+                  {...(errors["clinicContact"] && {
+                    error: true,
+                    helperText: errors["clinicContact"],
+                  })}
+                />
+              </Stack>
 
+              <Stack direction="row" sx={{ mt: 2 }}>
+                <TextField
+                  id="clinicRegistrationNo"
+                  label="Clinic registration no"
+                  name="clinicRegistrationNo"
+                  size="small"
+                  value={clinicRegistrationNo}
+                  sx={{ width: 300 }}
+                  onChange={handleChange("clinicRegistrationNo")}
+                  {...(errors["clinicRegistrationNo"] && {
+                    error: true,
+                    helperText: errors["clinicRegistrationNo"],
+                  })}
+                />
+                <TextField
+                  id="affiliatedFrom"
+                  label="Affiliated From"
+                  name="affiliatedFrom"
+                  size="small"
+                  placeholder="Enter clinic affiliation name"
+                  value={affiliatedFrom}
+                  sx={{ width: 300 }}
+                  onChange={handleChange("affiliatedFrom")}
+                  {...(errors["affiliatedFrom"] && {
+                    error: true,
+                    helperText: errors["affiliatedFrom"],
+                  })}
+                />
+              </Stack>
+            </TabPanel>
+            <TabPanel value={value} index={3}>
+              <Typography variant="overline">Clinician Skills</Typography>
+              <TextField
+                id="newCourse"
+                label="Professional Courses"
+                name="newCourse"
+                size="small"
+                placeholder="Enter course name"
+                value={newCourse}
+                sx={{ width: 300 }}
+                onChange={handleChange("newCourse")}
+                onKeyDown={handleAddNewCourse(newCourse)}
+                {...(errors["newCourse"] && {
+                  error: true,
+                  helperText: errors["newCourse"],
+                })}
+              />
+
+              {clinicianProfessionalCourses.length > 0
+                ? clinicianProfessionalCourses.map((course, index) => (
+                    <Chip size="small" key={index} label={course} />
+                  ))
+                : ""}
+
+              <TextField
+                id="newSpecialty"
+                label="Add new specialization"
+                name="newSpecialty"
+                size="small"
+                placeholder="Add new specialization"
+                value={newSpecialty}
+                sx={{ width: 300 }}
+                onChange={handleChange("newSpecialty")}
+                onKeyDown={handleAddNewSpecialty(newSpecialty)}
+                {...(errors["newSpecialty"] && {
+                  error: true,
+                  helperText: errors["newSpecialty"],
+                })}
+              />
+
+              {clinicianSpecialization.length > 0
+                ? clinicianSpecialization.map((specialty, index) => (
+                    <Chip size="small" key={index} label={specialty} />
+                  ))
+                : ""}
+            </TabPanel>
+            <TabPanel value={value} index={4}>
+              <Typography variant="overline">Clinic Address</Typography>
+              <Stack direction="row" sx={{ mt: 2 }}>
+                <TextField
+                  id="address1"
+                  label="address1"
+                  name="address1"
+                  placeholder="Enter Address"
+                  size="small"
+                  value={clinicAddress.address1}
+                  onChange={(e) =>
+                    setValues({
+                      ...values,
+                      clinicAddress: {
+                        ...values.clinicAddress,
+                        address1: e.target.value,
+                      },
+                    })
+                  }
+                  {...(errors["address1"] && {
+                    error: true,
+                    helperText: errors["address1"],
+                  })}
+                />
+                <TextField
+                  id="address2"
+                  label="address2"
+                  name="address2"
+                  placeholder="Enter Address"
+                  size="small"
+                  value={clinicAddress.address2}
+                  onChange={(e) =>
+                    setValues({
+                      ...values,
+                      clinicAddress: {
+                        ...values.clinicAddress,
+                        address2: e.target.value,
+                      },
+                    })
+                  }
+                  {...(errors["address2"] && {
+                    error: true,
+                    helperText: errors["address2"],
+                  })}
+                />
+                <TextField
+                  id="city"
+                  label="city"
+                  name="city"
+                  placeholder="Enter city"
+                  size="small"
+                  value={clinicAddress.city}
+                  onChange={(e) =>
+                    setValues({
+                      ...values,
+                      clinicAddress: {
+                        ...values.clinicAddress,
+                        city: e.target.value,
+                      },
+                    })
+                  }
+                  {...(errors["city"] && {
+                    error: true,
+                    helperText: errors["city"],
+                  })}
+                />
+                <FormControl sx={{ minWidth: 150 }} size="small">
+                  <InputLabel id="demo-country">Country</InputLabel>
+                  <Select
+                    labelId="demo-country"
+                    id="demo-country"
+                    value={clinicAddress.country}
+                    label="country"
+                    name="country"
+                    onChange={(e) =>
+                      setValues({
+                        ...values,
+                        clinicAddress: {
+                          ...values.clinicAddress,
+                          country: e.target.value,
+                        },
+                      })
+                    }
+                  >
+                    {countriesList.map((country, index) => (
+                      <MenuItem key={index} value={country.value}>
+                        {country.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <FormControl sx={{ minWidth: 150 }} size="small">
+                  <InputLabel id="demo-province">Province</InputLabel>
+                  <Select
+                    labelId="demo-province"
+                    id="demo-province"
+                    value={clinicAddress.province}
+                    label="province"
+                    name="province"
+                    onChange={(e) =>
+                      setValues({
+                        ...values,
+                        clinicAddress: {
+                          ...values.clinicAddress,
+                          province: e.target.value,
+                        },
+                      })
+                    }
+                  >
+                    {provincesList.map((province, index) => (
+                      <MenuItem key={index} value={province.value}>
+                        {province.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <TextField
+                  id="postalCode"
+                  label="Postal Code"
+                  name="postalCode"
+                  placeholder="Enter postal code"
+                  size="small"
+                  value={clinicAddress.postalCode}
+                  maxLength={6}
+                  onChange={(e) =>
+                    setValues({
+                      ...values,
+                      clinicAddress: {
+                        ...values.clinicAddress,
+                        postalCode: e.target.value,
+                      },
+                    })
+                  }
+                  {...(errors["postalCode"] && {
+                    error: true,
+                    helperText: errors["postalCode"],
+                  })}
+                />
+              </Stack>
+            </TabPanel>
+            <TabPanel value={value} index={5}>
+              <Typography variant="overline">Social Accounts</Typography>
+              <Stack direction="column">
                 <TextField
                   id="facebookLink"
                   label="Facebook"
@@ -957,29 +1222,16 @@ const UserEditProfile = ({ history }) => {
                     helperText: errors["instagramLink"],
                   })}
                 />
-                <FormControl sx={{ minWidth: 80 }} size="small">
-                  <InputLabel id="demo-registeredYear">
-                    Registered Year
-                  </InputLabel>
-                  <Select
-                    labelId="demo-registeredYear"
-                    id="demo-registeredYear"
-                    value={clinicRegisteredYear}
-                    label="Clinic Registered Year"
-                    name="clinicRegisteredYear"
-                    onChange={handleChange("clinicRegisteredYear")}
-                  >
-                    {yearDropDownValues.map((year, index) => (
-                      <MenuItem key={index} value={year}>
-                        {year}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} md={6} lg={4}></Grid>
-            </Grid>
+              </Stack>
+            </TabPanel>
           </Box>
+          <Button
+            onClick={handleUpdateProfile}
+            sx={{ mt: 2, boxShadow: 10, width: "40ch" }}
+            variant="contained"
+          >
+            Update
+          </Button>
         </Fragment>
       )}
     </Fragment>

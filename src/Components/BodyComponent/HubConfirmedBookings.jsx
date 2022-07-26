@@ -17,15 +17,24 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import CircularProgress from "@mui/material/CircularProgress";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import { Badge, Typography } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
+    padding: 8,
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: 12,
+    padding: 8,
   },
+}));
+
+const SmallAvatar = styled(Avatar)(({ theme }) => ({
+  width: 22,
+  height: 22,
+  border: `2px solid ${theme.palette.background.paper}`,
 }));
 
 const StyledTableRow = styled(TableRow)(({ theme }) => ({
@@ -93,73 +102,96 @@ const HubConfirmedBookings = () => {
       {loading ? (
         <CircularProgress></CircularProgress>
       ) : (
-        <TableContainer component={Paper}>
-          <Table sx={tableHeadStyle} aria-label="customized table">
-            <TableHead>
-              <TableRow>
-                <StyledTableCell></StyledTableCell>
-                <StyledTableCell>Requested By</StyledTableCell>
-                <StyledTableCell>Requested For</StyledTableCell>
-                <StyledTableCell>Appointment Date</StyledTableCell>
-                <StyledTableCell>Appointment Time</StyledTableCell>
-                <StyledTableCell colSpan={2}>
-                  Appointment Status
-                </StyledTableCell>
-                <StyledTableCell colSpan={2}>
-                  Appointment confirmation Id
-                </StyledTableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {confirmedAppointments.map((row) => (
-                <StyledTableRow style={{ textAlign: "left" }} key={row._id}>
-                  <StyledTableCell>
-                    <Avatar alt="img" src={row.requestedBy.profilePhoto} />
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    {row.requestedBy.firstName} {row.requestedBy.lastName}
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    {row.requestedFor.firstName} {row.requestedFor.lastName}
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    {convertToDate(row.appointmentDate)}
-                  </StyledTableCell>
-                  <StyledTableCell>{row.appointmentTime}</StyledTableCell>
-                  <StyledTableCell>{row.status}</StyledTableCell>
-                  <StyledTableCell>
-                    <Tooltip title={row.status === "active" && "ACTIVE"}>
-                      <span>
-                        <Button>
-                          {row.status === "active" && (
-                            <NotificationsActiveIcon color="success"></NotificationsActiveIcon>
-                          )}
-                        </Button>
-                      </span>
-                    </Tooltip>
-                  </StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    {row._id}
-                  </StyledTableCell>
-                  <StyledTableCell>
-                    <Tooltip title="Click for more information">
-                      <Button
-                        size="small"
-                        component={Link}
-                        to={`/confirmedBookings/${row._id}`}
-                      >
-                        <OpenInFullIcon
-                          color="primary"
-                          size="small"
-                        ></OpenInFullIcon>
-                      </Button>
-                    </Tooltip>
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+        <Fragment>
+          {confirmedAppointments.length > 0 ? (
+            <TableContainer component={Paper}>
+              <Table sx={tableHeadStyle} aria-label="customized table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell></StyledTableCell>
+                    <StyledTableCell>Requested By</StyledTableCell>
+                    <StyledTableCell>Requested For</StyledTableCell>
+                    <StyledTableCell>Appointment Date</StyledTableCell>
+                    <StyledTableCell>Appointment Time</StyledTableCell>
+                    <StyledTableCell colSpan={2}>
+                      Appointment Status
+                    </StyledTableCell>
+                    <StyledTableCell colSpan={2}>
+                      Appointment confirmation Id
+                    </StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {confirmedAppointments.map((row) => (
+                    <StyledTableRow style={{ textAlign: "left" }} key={row._id}>
+                      <StyledTableCell>
+                        <Badge
+                          overlap="circular"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          badgeContent={
+                            <SmallAvatar
+                              alt="img"
+                              src={row.requestedTo.profilePhoto}
+                            />
+                          }
+                        >
+                          <Avatar
+                            alt="img"
+                            src={row.requestedBy.profilePhoto}
+                          />
+                        </Badge>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {row.requestedBy.firstName} {row.requestedBy.lastName}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {row.requestedFor.firstName} {row.requestedFor.lastName}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        {convertToDate(row.appointmentDate)}
+                      </StyledTableCell>
+                      <StyledTableCell>{row.appointmentTime}</StyledTableCell>
+                      <StyledTableCell>{row.status}</StyledTableCell>
+                      <StyledTableCell>
+                        <Tooltip title={row.status === "active" && "ACTIVE"}>
+                          <span>
+                            <Button>
+                              {row.status === "active" && (
+                                <NotificationsActiveIcon color="success"></NotificationsActiveIcon>
+                              )}
+                            </Button>
+                          </span>
+                        </Tooltip>
+                      </StyledTableCell>
+                      <StyledTableCell component="th" scope="row">
+                        {row._id}
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Tooltip title="more information">
+                          <Button
+                            size="small"
+                            component={Link}
+                            to={`/confirmedBookings/${row._id}`}
+                          >
+                            <OpenInFullIcon
+                              color="primary"
+                              size="small"
+                            ></OpenInFullIcon>
+                          </Button>
+                        </Tooltip>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography>No Appointments available</Typography>
+          )}
+        </Fragment>
       )}
     </Fragment>
   );

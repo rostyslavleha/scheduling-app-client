@@ -232,7 +232,7 @@ const ResetPassword = ({ match }) => {
                 fullWidth
                 name="confirmPassword"
                 label="Confirm Password"
-                type="password"
+                type={showConfirmPassword ? "text" : "password"}
                 id="confirmPassword"
                 autoComplete="new-password"
                 placeholder="Confirm new password"

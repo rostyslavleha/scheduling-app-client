@@ -106,13 +106,13 @@ const SignUp = ({ history }) => {
     } else if (!isNonWhiteSpace.test(password)) {
       temp.password = "Password must not contain any white spaces.";
     } else if (!isValidLength.test(password)) {
-      temp.password = "Password must be 8-16 Characters Long";
+      temp.password = "Password must be between 8-16 characters";
     } else if (!isContainsUppercase.test(password)) {
-      temp.password = "Password must have at least one Uppercase Character";
+      temp.password = "Password must have at least one uppercase Character";
     } else if (!isContainsLowercase.test(password)) {
-      temp.password = "Password must have at least one Lowercase Character";
+      temp.password = "Password must have at least one lowercase Character";
     } else if (!isContainsNumber.test(password)) {
-      temp.password = "Password must have at least one digit";
+      temp.password = "Password must have at least one number";
     } else if (!isContainsSymbol.test(password)) {
       temp.password = "Password must have at least one special Character";
     } else {
