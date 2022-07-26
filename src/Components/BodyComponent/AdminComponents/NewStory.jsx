@@ -14,6 +14,9 @@ import Container from "@mui/material/Container";
 import NavBreadCrumb from "../NavBreadCrumb";
 import ButtonBase from "@mui/material/ButtonBase";
 import ImageListItem from "@mui/material/ImageListItem";
+import Card from '@mui/material/Card';
+import { CardHeader, Typography } from "@mui/material";
+
 
 const NewStory = ({ history }) => {
   const allInputs = { imgUrl: "" };
@@ -125,6 +128,13 @@ const NewStory = ({ history }) => {
       ></NavBreadCrumb>
       <ToastContainer></ToastContainer>
       <Container component="main" maxWidth="maxWidth">
+      <Card fullWidth>
+        <CardHeader
+          title="New Story"
+          titleTypographyProps={{variant:'h7'}}
+          sx={{ textAlign: "center", clipPath: "polygon(0 0,100% 0,100% 100%,36px 100%,18px calc(100% - 18px),0 calc(100% - 36px))", background: "#4dabf5", height: 5 }}
+        >
+        </CardHeader>
         <Box
           component="form"
           noValidate
@@ -144,23 +154,30 @@ const NewStory = ({ history }) => {
                 xs={12}
                 sm={6}
                 md={4}
-                sx={{ width: 125, height: 125 }}
+                sx={{ width: 275, height: 275, background: 'grey', ml: 4 }}
               >
                 <ImageListItem>
-                  <img src={`${preview}`} alt="" loading="lazy" />
+                  <img src={`${preview}`} alt="" loading="lazy"/>
                 </ImageListItem>{" "}
+                <input type="file" accept="image/*" onChange={handleImageAsFile}></input>
               </ButtonBase>
             </Grid>
-            <Grid item xs={6} sm={3} md={4}>
-              <Button containerelement="label" size="small">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageAsFile}
-                ></input>{" "}
-              </Button>
-            </Grid>
-            <Grid item xs={6} sm={3} md={0}>
+
+            <Grid item xs={8}>
+              <TextField
+                required
+                multiline
+                rows={10}
+                id="storyContent"
+                label="Story Content"
+                name="storyContent"
+                value={storyContent}
+                onChange={handleChange("storyContent")}
+                sx={{ width: '100%' }}
+              />
+              </Grid>
+
+            <Grid item xs={6} sm={3} md={0} sx={{ ml: 15 }}>
               <Button
                 variant="contained"
                 color="primary"
@@ -176,60 +193,52 @@ const NewStory = ({ history }) => {
           </Grid>
         </Box>
         <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 3 }}>
-          <Grid container spacing={2}>
+          <Grid container
+                direction="row"
+                justifyContent="flex-end"
+                alignItems="flex-start"
+                spacing={{ xs: 2, md: 3 }}>
             <Grid item xs={12}>
               <TextField
                 required
-                fullWidth
                 id="storyTitle"
                 label="Story Title"
                 name="storyTitle"
                 value={storyTitle}
                 onChange={handleChange("storyTitle")}
+                sx={{ width: '93.5%', ml: 4 }}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
                 required
-                fullWidth
                 id="storyHeading"
                 label="Story Heading"
                 name="storyHeading"
                 value={storyHeading}
                 onChange={handleChange("storyHeading")}
+                sx={{ width: '93.5%', ml: 4 }}
               />
             </Grid>
             <Grid item xs={12}>
               <TextField
-                required
-                fullWidth
-                multiline
-                rows={10}
-                id="storyContent"
-                label="Story Content"
-                name="storyContent"
-                value={storyContent}
-                onChange={handleChange("storyContent")}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
                 id="storyLink"
                 label="Story URL"
                 name="storyLink"
                 value={storyLink}
                 onChange={handleChange("storyLink")}
+                sx={{ width: '93.5%', ml: 4 }}
               />
             </Grid>
           </Grid>
-          <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2 }}>
+          <Button type="submit" variant="contained" sx={{ mt: 3, mb: 2, ml: 4 }}>
             Submit
             {loading ? (
               <CircularProgress sx={{ ml: 3 }} color="inherit" size={20} />
             ) : null}
           </Button>
         </Box>
+        </Card>
       </Container>
     </Fragment>
   );

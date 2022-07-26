@@ -12,6 +12,7 @@ import NavBreadCrumb from "../NavBreadCrumb";
 import DeleteIcon from "@mui/icons-material/Delete";
 import storyDefaultImage from "../../../media/storyDefaultImage.png";
 import ImageList from "@mui/material/ImageList";
+import Divider from '@mui/material/Divider';
 
 const Stories = () => {
   const [values, setValues] = useState({
@@ -73,47 +74,44 @@ const Stories = () => {
         path="/admin/stories"
         name="/admin/stories"
       ></NavBreadCrumb>
-      <ImageList cols={4}>
+      <ImageList cols={3}>
         {stories.length > 0
           ? stories.map((story, key) => (
-              <Card key={story._id} sx={{ maxWidth: 350 }} m={1}>
+              <Card key={story._id} sx={{ maxWidth: 350, borderRadius: 0 }} m={1} elevation={2}>
                 <CardActionArea>
-                  <CardContent>
-                    <Typography variant="body2" color="text.secondary">
+                  <CardContent sx={{ clipPath: "polygon(0 0,100% 0,100% 100%,40px 100%,20px calc(100% - 20px),0 calc(100% - 40px))", background: '#4dabf5', height: 8 }}>
+                    <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', fontSize: 18, mt: -1 }}>
                       {story.title}
                     </Typography>
                   </CardContent>
                   {story.coverPhoto ? (
                     <CardMedia
                       component="img"
-                      height="140"
+                      height="250"
                       image={story.coverPhoto}
                       alt="no-image"
+                      sx={{ mt: 1, width: '75%', ml: 5.5}}
                     />
                   ) : (
                     <CardMedia
                       component="img"
-                      height="140"
+                      height="250"
                       image={storyDefaultImage}
                       alt="no-image"
+                      sx={{ mt: 1, width: '75%', ml: 5.5 }}
                     />
                   )}
                   <CardContent>
-                    {story.link ? <p>{story.link}</p> : ""}
-                    <Typography gutterBottom variant="h6" component="div">
+                    
+                    <Typography gutterBottom variant="h6" component="div" sx={{ color: '#16609D', }}>
                       {story.heading}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      {story.content}
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      ID: {story._id}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
                       Story added at : {story.createdAt}
                     </Typography>
+                    <Divider variant="middle" /> 
                     <Typography variant="body2" color="text.secondary">
-                      Last updated at : {story.updatedAt}
+                      {story.content}
                     </Typography>
                   </CardContent>
                 </CardActionArea>
@@ -122,7 +120,7 @@ const Stories = () => {
                     to={`/admin/story/update/${story._id}`}
                     style={{ textDecoration: "none", color: "inherit" }}
                   >
-                    <Button variant="outlined" size="small" color="primary">
+                    <Button variant="outlined" size="small" color="primary" sx={{ ml: 1 }}>
                       Edit
                     </Button>
                   </Link>
@@ -131,7 +129,7 @@ const Stories = () => {
                       deleteStory(story._id, story.coverPhoto);
                     }}
                   >
-                    <DeleteIcon></DeleteIcon>
+                    <DeleteIcon sx={{ ml: 1 }}></DeleteIcon>
                   </span>
                 </CardActions>
               </Card>
