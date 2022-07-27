@@ -1,25 +1,26 @@
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useEffect, useState, Fragment } from "react";
 import axios from "axios";
-import { getCookie } from "../../Common/helpers";
-import NavBreadCrumb from "./NavBreadCrumb";
-import AppointmentInfoById from "./AppointmentInfoById";
+import { getCookie } from "../../../Common/helpers";
+import NavBreadCrumb from "../NavBreadCrumb";
+import AppointmentInfoById from "../AppointmentInfoById";
 import { CircularProgress } from "@mui/material";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import CancelIcon from "@mui/icons-material/Cancel";
 
-const ConfirmedAppointmentInfoById = ({ match, history }) => {
+const RequestedSpokeAppointmentById = ({ match, history }) => {
   const [values, setValues] = useState({
     appointmentByIdInfo: {},
     loading: true,
   });
-
   const { appointmentByIdInfo, loading } = values;
   const token = getCookie("token");
   const appointmentId = match.params.appointmentId;
 
-  const getConfirmedAppointmentInfo = () => {
+  const getRequestedAppointmentInfo = () => {
     setValues({ ...values, loading: true });
     axios({
       method: "GET",
-      url: `${process.env.REACT_APP_API}/confirm-appointment/${appointmentId}`,
+      url: `${process.env.REACT_APP_API}/request-appointment/${appointmentId}`,
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((response) => {
@@ -39,14 +40,14 @@ const ConfirmedAppointmentInfoById = ({ match, history }) => {
   };
 
   useEffect(() => {
-    getConfirmedAppointmentInfo();
+    getRequestedAppointmentInfo();
   }, []);
 
   return (
     <Fragment>
       <NavBreadCrumb
-        path={`/confirmedBookings/${appointmentId}`}
-        name={`Appointment Id: ${appointmentId}`}
+        path={`/spoke/request/appointment/${appointmentId}`}
+        name={`Appointment request Id: ${appointmentId}`}
       ></NavBreadCrumb>
       {loading ? (
         <div>
@@ -61,4 +62,4 @@ const ConfirmedAppointmentInfoById = ({ match, history }) => {
   );
 };
 
-export default ConfirmedAppointmentInfoById;
+export default RequestedSpokeAppointmentById;

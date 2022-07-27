@@ -175,11 +175,11 @@ const RequestedSpokeAppointments = () => {
                         {row._id}
                       </StyledTableCell>
                       <StyledTableCell>
-                        <Tooltip title="click for more information">
+                        <Tooltip title="more information">
                           <Button
                             size="small"
                             component={Link}
-                            to={`/request/appointment/${row._id}`}
+                            to={`/spoke/request/appointment/${row._id}`}
                           >
                             <OpenInFullIcon
                               color="primary"

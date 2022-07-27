@@ -71,7 +71,7 @@ const SideNavData = ({ handleDrawerClose }) => {
     },
     {
       label: "Requests",
-      link: "/spoke/request/bookings",
+      link: "/spoke/request/appointment",
       icon: <CalendarMonthIcon />,
       access: ["spoke"],
     },

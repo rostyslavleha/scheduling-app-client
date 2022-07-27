@@ -28,6 +28,8 @@ import ConfirmedAppointmentInfoById from "../BodyComponent/ConfirmedAppointmentI
 import AppointmentBooking from "../BodyComponent/AppointmentBooking";
 import RequestedSpokeAppointments from "../BodyComponent/SpokeComponents/RequestedSpokeAppointments";
 import SpokeConfirmedBookings from "../BodyComponent/SpokeComponents/SpokeConfirmedBookings";
+import RequestedSpokeAppointmentById from "../BodyComponent/SpokeComponents/RequestedSpokeAppointmentById";
+import ConfirmedSpokeAppointmentInfoById from "../BodyComponent/SpokeComponents/ConfirmedSpokeAppointmentInfoById";
 
 const StyledBox = styled(Box)(({ theme }) => ({
   width: "100%",
@@ -95,16 +97,21 @@ export default function HeaderComponent() {
             path="/request/appointment/:appointmentId"
             component={RequestedHubAppointmentById}
           ></HubRoute>
+          <SpokeRoute
+            exact
+            path="/spoke/request/appointment/:appointmentId"
+            component={RequestedSpokeAppointmentById}
+          ></SpokeRoute>
           <HubRoute
             exact
             path="/hub/confirmedBookings"
             component={HubConfirmedBookings}
           ></HubRoute>
-          <UserRoute
+          <HubRoute
             exact
             path="/confirmedBookings/:appointmentId"
             component={ConfirmedAppointmentInfoById}
-          ></UserRoute>
+          ></HubRoute>
           <SpokeRoute
             exact
             path="/clinicians"
@@ -117,7 +124,7 @@ export default function HeaderComponent() {
           ></SpokeRoute>
           <SpokeRoute
             exact
-            path="/spoke/request/bookings"
+            path="/spoke/request/appointment"
             component={RequestedSpokeAppointments}
           ></SpokeRoute>
           <SpokeRoute
