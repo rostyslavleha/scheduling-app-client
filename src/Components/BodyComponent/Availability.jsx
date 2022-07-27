@@ -247,7 +247,15 @@ export default function Availability() {
   }
 
   const customList = (items) => (
-    <Paper sx={{ width: 300, height: 500, overflow: "auto" }}>
+    <Paper
+      sx={{
+        width: 300,
+        height: 500,
+        overflow: "auto",
+        paddingLeft: 1,
+        paddingRight: 1,
+      }}
+    >
       <List dense component="div" role="list">
         {items.length > 0 ? (
           items.map((value) => {
@@ -258,6 +266,7 @@ export default function Availability() {
                 role="listitem"
                 button
                 onClick={handleToggle(value)}
+                sx={{ border: "1px solid #000", marginTop: 1, borderRadius: 1 }}
               >
                 <ListItemIcon>
                   <Checkbox
@@ -326,7 +335,7 @@ export default function Availability() {
             m: 3,
             p: 2,
             border: "2px solid #1976d2",
-            borderRadius: 5,
+            borderRadius: 2,
           }}
         >
           <Grid item>

@@ -84,6 +84,7 @@ const RequestedHubAppointments = () => {
         console.log("Appointments Info ERROR", error.response.data.error);
       });
   };
+
   const convertToDate = (str) => {
     var date = new Date(str);
     var month = ("0" + (date.getMonth() + 1)).slice(-2);
@@ -143,7 +144,7 @@ const RequestedHubAppointments = () => {
                           <Avatar
                             alt="img"
                             src={row.requestedBy.profilePhoto}
-                          />
+                          ></Avatar>
                         </Badge>
                       </StyledTableCell>
                       <StyledTableCell>

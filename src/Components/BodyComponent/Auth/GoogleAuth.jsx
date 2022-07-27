@@ -19,7 +19,7 @@ const GoogleAuth = ({ informParent, path }) => {
       data: { idToken: response.tokenId },
     })
       .then((response) => {
-        console.log("GOOGLE AUTHENTICATION SUCCESS", response);
+        // console.log("GOOGLE AUTHENTICATION SUCCESS", response);
         //inform parent about the signIn and redirect to home page based on user role
         informParent(response);
       })

@@ -2,18 +2,20 @@ import React, { useEffect, useState, Fragment } from "react";
 import axios from "axios";
 import { getCookie } from "../../Common/helpers";
 import NavBreadCrumb from "./NavBreadCrumb";
-import CircularProgress from "@mui/material/CircularProgress";
 import AppointmentInfoById from "./AppointmentInfoById";
-import Stack from "@mui/material/Stack";
-import Button from "@mui/material/Button";
+import {
+  DialogTitle,
+  DialogContentText,
+  DialogContent,
+  DialogActions,
+  Dialog,
+  Tooltip,
+  Button,
+  Stack,
+  CircularProgress,
+} from "@mui/material";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CancelIcon from "@mui/icons-material/Cancel";
-import Tooltip from "@mui/material/Tooltip";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 
 const RequestedHubAppointmentById = ({ match, history }) => {
   const [values, setValues] = useState({
@@ -136,7 +138,7 @@ const RequestedHubAppointmentById = ({ match, history }) => {
     <Fragment>
       <NavBreadCrumb
         path={`/request/appointment/${appointmentId}`}
-        name={`AppointmentId- ${appointmentId}`}
+        name={`Appointment request Id: ${appointmentId}`}
       ></NavBreadCrumb>
       {loading ? (
         <div>
@@ -148,11 +150,11 @@ const RequestedHubAppointmentById = ({ match, history }) => {
             appointmentByIdInfo={appointmentByIdInfo}
           ></AppointmentInfoById>
           <Stack
-            mt={2}
+            mt={1}
             direction="row"
-            justifyContent="center"
+            justifyContent="flex-end"
             alignItems="center"
-            spacing={2}
+            spacing={1}
           >
             <Tooltip
               title={
@@ -170,7 +172,7 @@ const RequestedHubAppointmentById = ({ match, history }) => {
                   }
                   onClick={handleApproveClickOpen}
                 >
-                  Approve<CheckCircleIcon></CheckCircleIcon>{" "}
+                  Approve<CheckCircleIcon></CheckCircleIcon>
                 </Button>
               </span>
             </Tooltip>

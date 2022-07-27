@@ -1,1 +1,2 @@
-1) Add confirmed appointments slot time in the availability page
+1) Add confirmed appointments slot time in the availability page - done
+2) Do not replicate the appointment request for the same patient at the same time with the same clinician.
