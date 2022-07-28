@@ -109,9 +109,14 @@ export default function HeaderComponent() {
           ></HubRoute>
           <HubRoute
             exact
-            path="/confirmedBookings/:appointmentId"
+            path="/hub/confirmedBookings/:appointmentId"
             component={ConfirmedAppointmentInfoById}
           ></HubRoute>
+          <SpokeRoute
+            exact
+            path="/spoke/confirmedBookings/:appointmentId"
+            component={ConfirmedSpokeAppointmentInfoById}
+          ></SpokeRoute>
           <SpokeRoute
             exact
             path="/clinicians"

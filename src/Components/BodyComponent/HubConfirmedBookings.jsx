@@ -17,7 +17,18 @@ import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import CircularProgress from "@mui/material/CircularProgress";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import VerifiedIcon from "@mui/icons-material/Verified";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { Badge, Typography } from "@mui/material";
+
+const appointmentStatusValues = {
+  active: {
+    message: "active",
+    icon: <NotificationsActiveIcon color="success" />,
+  },
+  fulfilled: { message: "fulfilled", icon: <VerifiedIcon color="primary" /> },
+  cancelled: { message: "cancelled", icon: <HighlightOffIcon color="error" /> },
+};
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -156,15 +167,45 @@ const HubConfirmedBookings = () => {
                       <StyledTableCell>{row.appointmentTime}</StyledTableCell>
                       <StyledTableCell>{row.status}</StyledTableCell>
                       <StyledTableCell>
-                        <Tooltip title={row.status === "active" && "ACTIVE"}>
-                          <span>
-                            <Button>
-                              {row.status === "active" && (
-                                <NotificationsActiveIcon color="success"></NotificationsActiveIcon>
-                              )}
-                            </Button>
-                          </span>
-                        </Tooltip>
+                        {row.status === "active" && (
+                          <Tooltip
+                            title={appointmentStatusValues[
+                              row.status
+                            ].message.toUpperCase()}
+                          >
+                            <span>
+                              <Button>
+                                {appointmentStatusValues[row.status].icon}
+                              </Button>
+                            </span>
+                          </Tooltip>
+                        )}
+                        {row.status === "fulfilled" && (
+                          <Tooltip
+                            title={appointmentStatusValues[
+                              row.status
+                            ].message.toUpperCase()}
+                          >
+                            <span>
+                              <Button>
+                                {appointmentStatusValues[row.status].icon}
+                              </Button>
+                            </span>
+                          </Tooltip>
+                        )}
+                        {row.status === "cancelled" && (
+                          <Tooltip
+                            title={appointmentStatusValues[
+                              row.status
+                            ].message.toUpperCase()}
+                          >
+                            <span>
+                              <Button>
+                                {appointmentStatusValues[row.status].icon}
+                              </Button>
+                            </span>
+                          </Tooltip>
+                        )}
                       </StyledTableCell>
                       <StyledTableCell component="th" scope="row">
                         {row._id}
@@ -174,7 +215,7 @@ const HubConfirmedBookings = () => {
                           <Button
                             size="small"
                             component={Link}
-                            to={`/confirmedBookings/${row._id}`}
+                            to={`/hub/confirmedBookings/${row._id}`}
                           >
                             <OpenInFullIcon
                               color="primary"

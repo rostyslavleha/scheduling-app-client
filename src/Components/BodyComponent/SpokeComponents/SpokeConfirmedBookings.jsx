@@ -173,7 +173,7 @@ const SpokeConfirmedBookings = () => {
                           <Button
                             size="small"
                             component={Link}
-                            to={`/confirmedBookings/${row._id}`}
+                            to={`/spoke/confirmedBookings/${row._id}`}
                           >
                             <OpenInFullIcon
                               color="primary"

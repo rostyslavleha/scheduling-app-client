@@ -9,11 +9,15 @@ import {
 import HelpIcon from "@mui/icons-material/Help";
 import CancelIcon from "@mui/icons-material/Cancel";
 import NotificationsActiveIcon from "@mui/icons-material/NotificationsActive";
+import VerifiedIcon from "@mui/icons-material/Verified";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 
 const appointmentStatusButtonColor = {
   rejected: "error",
   pending: "primary",
   active: "success",
+  fulfilled: "primary",
+  cancelled: "error",
 };
 
 const AppointmentPatientDetails = ({
@@ -31,13 +35,29 @@ const AppointmentPatientDetails = ({
           {appointmentStatus.toUpperCase()}
         </Typography>
         {appointmentStatus === "rejected" && (
-          <CancelIcon color="error"></CancelIcon>
+          <CancelIcon
+            color={appointmentStatusButtonColor[appointmentStatus]}
+          ></CancelIcon>
         )}
         {appointmentStatus === "pending" && (
-          <HelpIcon color="primary"></HelpIcon>
+          <HelpIcon
+            color={appointmentStatusButtonColor[appointmentStatus]}
+          ></HelpIcon>
         )}
         {appointmentStatus === "active" && (
-          <NotificationsActiveIcon color="success"></NotificationsActiveIcon>
+          <NotificationsActiveIcon
+            color={appointmentStatusButtonColor[appointmentStatus]}
+          ></NotificationsActiveIcon>
+        )}
+        {appointmentStatus === "fulfilled" && (
+          <VerifiedIcon
+            color={appointmentStatusButtonColor[appointmentStatus]}
+          ></VerifiedIcon>
+        )}
+        {appointmentStatus === "cancelled" && (
+          <HighlightOffIcon
+            color={appointmentStatusButtonColor[appointmentStatus]}
+          ></HighlightOffIcon>
         )}
       </Button>
       <List

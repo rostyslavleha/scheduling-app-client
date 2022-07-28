@@ -27,6 +27,7 @@ import {
   Tab,
   Typography,
   InputAdornment,
+  Link as UILink,
 } from "@mui/material";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import storage from "../../firebase";
@@ -112,6 +113,7 @@ const UserEditProfile = ({ history }) => {
     dateOfBirth: "",
     yearsOfExperience: 0,
     _id: "",
+    meetingLink: "",
     experienceDropDownValues: [],
     yearDropDownValues: [],
     loading: false,
@@ -149,6 +151,7 @@ const UserEditProfile = ({ history }) => {
     dateOfBirth,
     yearsOfExperience,
     _id,
+    meetingLink,
     experienceDropDownValues,
     yearDropDownValues,
     profilePhotoUploading,
@@ -483,6 +486,7 @@ const UserEditProfile = ({ history }) => {
           username,
           dateOfBirth,
           yearsOfExperience,
+          meetingLink,
           _id,
         } = response.data;
         setValues({
@@ -509,6 +513,7 @@ const UserEditProfile = ({ history }) => {
           username,
           dateOfBirth,
           yearsOfExperience,
+          meetingLink,
           clinicAddress: {
             ...values.clinicAddress,
             address1: clinicAddress.address1,
@@ -783,6 +788,21 @@ const UserEditProfile = ({ history }) => {
                   {...(errors["clinicianTrainedLocation"] && {
                     error: true,
                     helperText: errors["clinicianTrainedLocation"],
+                  })}
+                />
+                <TextField
+                  required
+                  id="meetingLink"
+                  label="Meeting Link"
+                  name="meetingLink"
+                  autoComplete="meetingLink"
+                  placeholder="Enter your personal meeting link"
+                  size="small"
+                  value={meetingLink}
+                  onChange={handleChange("meetingLink")}
+                  {...(errors["meetingLink"] && {
+                    error: true,
+                    helperText: errors["meetingLink"],
                   })}
                 />
               </Stack>
@@ -1156,6 +1176,9 @@ const UserEditProfile = ({ history }) => {
                     helperText: errors["facebookLink"],
                   })}
                 />
+                <UILink href={socialMediaHandles.facebook} underline="always">
+                  {socialMediaHandles.facebook}
+                </UILink>
                 <TextField
                   id="twitterLink"
                   label="Twitter"
