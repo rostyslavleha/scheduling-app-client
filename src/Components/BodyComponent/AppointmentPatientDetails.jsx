@@ -5,6 +5,7 @@ import {
   ListItem,
   ListItemText,
   Typography,
+  ListSubheader,
 } from "@mui/material";
 import HelpIcon from "@mui/icons-material/Help";
 import CancelIcon from "@mui/icons-material/Cancel";
@@ -62,12 +63,16 @@ const AppointmentPatientDetails = ({
       </Button>
       <List
         dense
+        subheader={
+          <ListSubheader>
+            <Typography variant="overline">Patient Information</Typography>
+          </ListSubheader>
+        }
         sx={{
           width: "100%",
           maxWidth: 400,
           padding: 0,
           border: "1px solid #1976d2",
-          borderRadius: 2,
         }}
       >
         <ListItem
@@ -81,7 +86,7 @@ const AppointmentPatientDetails = ({
           }
         >
           <ListItemText
-            primary={<Typography variant="overline">Patient Name: </Typography>}
+            primary={<Typography variant="overline"> Name: </Typography>}
           />
         </ListItem>
         <ListItem

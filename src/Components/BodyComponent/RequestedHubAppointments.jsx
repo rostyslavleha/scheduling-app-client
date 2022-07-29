@@ -26,7 +26,7 @@ import { getCookie } from "../../Common/helpers";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
+    backgroundColor: "#1976d2",
     color: theme.palette.common.white,
     padding: 8,
   },

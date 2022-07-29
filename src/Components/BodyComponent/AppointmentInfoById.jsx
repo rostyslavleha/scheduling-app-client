@@ -33,10 +33,10 @@ const AppointmentInfoById = ({ appointmentByIdInfo }) => {
         </Typography>
 
         <Typography variant="caption">
-          Appointment requested at: {Date(appointmentByIdInfo.createdAt)}
+          Created: {Date(appointmentByIdInfo.createdAt)}
         </Typography>
         <Typography variant="caption">
-          Appointment last updated at: {Date(appointmentByIdInfo.updatedAt)}
+          Last updated: {Date(appointmentByIdInfo.updatedAt)}
         </Typography>
       </Stack>
 
