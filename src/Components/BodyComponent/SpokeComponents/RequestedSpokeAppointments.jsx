@@ -94,8 +94,8 @@ const RequestedSpokeAppointments = () => {
   return (
     <Fragment>
       <NavBreadCrumb
-        path="/spoke/request/bookings"
-        name="/spoke/request/bookings"
+        path="/spoke/request/appointment"
+        name="Requested Appointments"
       ></NavBreadCrumb>{" "}
       {loading ? (
         <CircularProgress></CircularProgress>
