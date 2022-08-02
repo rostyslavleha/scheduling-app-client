@@ -171,7 +171,7 @@ const UserProfile = ({ history }) => {
                 {title}
               </div>
               <img
-                src={profilePhoto}
+                src={`${isAuth().profilePhoto}`}
                 style={{ width: "100px", height: "100px" }}
               ></img>
               <div>Experience: {yearsOfExperience}</div>

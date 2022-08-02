@@ -693,7 +693,6 @@ const AppointmentBooking = ({ match, history }) => {
                 displayStaticWrapperAs="desktop"
                 disablePast
                 openTo="day"
-                shouldDisableDate={isWeekend}
                 value={appointmentDate}
                 onChange={(newValue) => {
                   setValues({ ...values, appointmentDate: newValue });

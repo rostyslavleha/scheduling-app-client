@@ -35,6 +35,7 @@ import { StaticDatePicker } from "@mui/x-date-pickers/StaticDatePicker";
 import { isAuth, getCookie } from "../../Common/helpers";
 import { useTheme } from "@mui/material/styles";
 import NavBreadCrumb from "./NavBreadCrumb";
+import VerifiedIcon from "@mui/icons-material/Verified";
 
 const not = (a, b) => {
   return a.filter((value) => b.indexOf(value) === -1);
@@ -49,6 +50,7 @@ export default function Availability() {
   const [left, setLeft] = useState([]);
   const [right, setRight] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
+  const [fulfilledSlots, setFulfilledSlots] = useState([]);
   const [appointmentDate, setAppointmentDate] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [pendingRequestSlots, setPendingRequestSlots] = useState([]);
@@ -132,7 +134,6 @@ export default function Availability() {
   const getAvailabilityByDate = () => {
     const clinicianId = isAuth()._id;
     const availabilityDate = convertToDate(appointmentDate);
-    setBookedSlots([]);
     axios({
       method: "GET",
       url: `${process.env.REACT_APP_API}/availability/${clinicianId}/${availabilityDate}`,
@@ -147,7 +148,6 @@ export default function Availability() {
               slot.isAvailable === false && confirmedSlots.push(slot.time);
               availabilityByDate.push(slot.time);
             });
-        confirmedSlots.length > 0 && setBookedSlots(confirmedSlots);
         availabilityByDate.length > 0
           ? setRight(availabilityByDate.sort())
           : setRight([]);
@@ -156,6 +156,36 @@ export default function Availability() {
           return !availabilityByDate.includes(slot);
         });
         setLeft(leftSlotsAvailable.sort());
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  // write API to get confirmed appointment Bookings and set it's values to setBookedSlots state
+  const getConfirmedAppointmentsByDate = () => {
+    setBookedSlots([]);
+    setFulfilledSlots([]);
+    let availabilityByDate = convertToDate(appointmentDate);
+    axios({
+      method: "GET",
+      url: `${process.env.REACT_APP_API}/confirmed-appointments/${availabilityByDate}`,
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((response) => {
+        console.log(response.data);
+        let confirmedSlots = [];
+        let fulfilledSlots = [];
+        response.data.confirmedAppointments.length === 0
+          ? setBookedSlots(confirmedSlots)
+          : response.data.confirmedAppointments.map((appointment) => {
+              appointment.status === "active" &&
+                confirmedSlots.push(appointment.appointmentTime);
+              appointment.status === "fulfilled" &&
+                fulfilledSlots.push(appointment.appointmentTime);
+            });
+        confirmedSlots.length > 0 && setBookedSlots(confirmedSlots);
+        fulfilledSlots.length > 0 && setFulfilledSlots(fulfilledSlots);
       })
       .catch((error) => {
         console.error(error);
@@ -173,7 +203,7 @@ export default function Availability() {
     })
       .then((response) => {
         const { data } = response;
-        // console.log(data);
+        console.log(data);
         let timeSlots = [];
         if (data.pendingAppointmentRequests.length > 0) {
           data.pendingAppointmentRequests.map((appointmentRequest) => {
@@ -190,6 +220,7 @@ export default function Availability() {
   useEffect(() => {
     getAvailabilityByDate();
     getPendingRequestsByDate();
+    getConfirmedAppointmentsByDate();
     // console.log("second", leftSlotsAvailable);
   }, [appointmentDate]);
 
@@ -247,7 +278,15 @@ export default function Availability() {
   }
 
   const customList = (items) => (
-    <Paper sx={{ width: 300, height: 500, overflow: "auto" }}>
+    <Paper
+      sx={{
+        width: 300,
+        height: 500,
+        overflow: "auto",
+        paddingLeft: 1,
+        paddingRight: 1,
+      }}
+    >
       <List dense component="div" role="list">
         {items.length > 0 ? (
           items.map((value) => {
@@ -258,6 +297,7 @@ export default function Availability() {
                 role="listitem"
                 button
                 onClick={handleToggle(value)}
+                sx={{ border: "1px solid #000", marginTop: 1, borderRadius: 1 }}
               >
                 <ListItemIcon>
                   <Checkbox
@@ -278,6 +318,13 @@ export default function Availability() {
                     title={`An appointment is already confirmed at ${value}`}
                   >
                     <CheckCircleIcon color="success"></CheckCircleIcon>
+                  </Tooltip>
+                )}
+                {fulfilledSlots.length > 0 && fulfilledSlots.includes(value) && (
+                  <Tooltip
+                    title={`Appointment completed successfully at ${value}`}
+                  >
+                    <VerifiedIcon color="primary"></VerifiedIcon>
                   </Tooltip>
                 )}
                 {pendingRequestSlots.length > 0 &&
@@ -311,7 +358,6 @@ export default function Availability() {
             // disablePast
             openTo="day"
             value={appointmentDate}
-            shouldDisableDate={isWeekend}
             onChange={(newValue) => {
               setAppointmentDate(newValue);
             }}
@@ -326,7 +372,7 @@ export default function Availability() {
             m: 3,
             p: 2,
             border: "2px solid #1976d2",
-            borderRadius: 5,
+            borderRadius: 2,
           }}
         >
           <Grid item>

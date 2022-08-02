@@ -90,7 +90,17 @@ export const updateUserInfo = (response, next) => {
   console.log("UPADATE USER IN LOCAL STORAGE HELPS", response);
   if (window !== undefined) {
     let auth = JSON.parse(localStorage.getItem("user"));
-    auth = response.data;
+    const { email, firstName, lastName, profilePhoto, role, _id } =
+      response.data;
+    const userUpdatedInfo = {
+      email: email,
+      firstName: firstName,
+      lastName: lastName,
+      profilePhoto: profilePhoto,
+      role: role,
+      _id: _id,
+    };
+    auth = userUpdatedInfo;
     localStorage.setItem("user", JSON.stringify(auth));
   }
   next();

@@ -17,7 +17,13 @@ const NavbarComponent = ({ handleDrawerToggle, history }) => {
 
   return (
     <AppBar>
-      <Toolbar className={classes.toolbar}>
+      <Toolbar
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          flexFlow: "row wrap",
+        }}
+      >
         <Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
           <Box style={{ display: "flex", alignItems: "center" }} sx={{ ml: 0 }}>
             <Box
@@ -25,8 +31,7 @@ const NavbarComponent = ({ handleDrawerToggle, history }) => {
               sx={{
                 height: 40,
               }}
-              alt="logo"
-              // src={Logo}
+              alt="PROMOTE"
               src={`${process.env.REACT_APP_LOGO}`}
             />
           </Box>

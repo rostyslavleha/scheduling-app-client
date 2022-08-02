@@ -74,7 +74,7 @@ const Profile = ({ history }) => {
         >
           <img
             alt={process.env.REACT_APP_DEFAULT_USER_PROFILE_AVATAR}
-            src={isAuth().profilePhoto}
+            src={`${isAuth().profilePhoto}`}
             style={{
               width: "35px",
               height: "35px",

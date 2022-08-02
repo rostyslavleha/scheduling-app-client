@@ -1,7 +1,6 @@
 import React, { Fragment } from "react";
-import { Box } from "@mui/material";
+import { Box, styled } from "@mui/material";
 import { Route, Switch } from "react-router-dom";
-import { useStyles } from "./HeaderStyle";
 import NavbarComponent from "./NavbarComponent";
 import SideNav from "./SideNav";
 import UserProfile from "../BodyComponent/UserProfile";
@@ -29,9 +28,22 @@ import ConfirmedAppointmentInfoById from "../BodyComponent/ConfirmedAppointmentI
 import AppointmentBooking from "../BodyComponent/AppointmentBooking";
 import RequestedSpokeAppointments from "../BodyComponent/SpokeComponents/RequestedSpokeAppointments";
 import SpokeConfirmedBookings from "../BodyComponent/SpokeComponents/SpokeConfirmedBookings";
+import RequestedSpokeAppointmentById from "../BodyComponent/SpokeComponents/RequestedSpokeAppointmentById";
+import ConfirmedSpokeAppointmentInfoById from "../BodyComponent/SpokeComponents/ConfirmedSpokeAppointmentInfoById";
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  width: "100%",
+  minHeight: "100vh",
+  height: "auto",
+  background: "#efefef",
+  boxSizing: "border-box",
+  padding: "70px 24px 24px 270px",
+  [theme.breakpoints.down("sm")]: {
+    padding: "70px 24px 24px 24px",
+  },
+}));
 
 export default function HeaderComponent() {
-  const classes = useStyles();
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
   const handleDrawerToggle = () => {
@@ -57,7 +69,7 @@ export default function HeaderComponent() {
           path="/auth/password/reset/:token"
           component={ResetPassword}
         ></Route>
-        <Box className={classes.wrapper}>
+        <StyledBox>
           <NavbarComponent handleDrawerToggle={handleDrawerToggle} />
           <SideNav
             mobileOpen={mobileOpen}
@@ -85,16 +97,26 @@ export default function HeaderComponent() {
             path="/request/appointment/:appointmentId"
             component={RequestedHubAppointmentById}
           ></HubRoute>
+          <SpokeRoute
+            exact
+            path="/spoke/request/appointment/:appointmentId"
+            component={RequestedSpokeAppointmentById}
+          ></SpokeRoute>
           <HubRoute
             exact
             path="/hub/confirmedBookings"
             component={HubConfirmedBookings}
           ></HubRoute>
-          <UserRoute
+          <HubRoute
             exact
-            path="/confirmedBookings/:appointmentId"
+            path="/hub/confirmedBookings/:appointmentId"
             component={ConfirmedAppointmentInfoById}
-          ></UserRoute>
+          ></HubRoute>
+          <SpokeRoute
+            exact
+            path="/spoke/confirmedBookings/:appointmentId"
+            component={ConfirmedSpokeAppointmentInfoById}
+          ></SpokeRoute>
           <SpokeRoute
             exact
             path="/clinicians"
@@ -107,7 +129,7 @@ export default function HeaderComponent() {
           ></SpokeRoute>
           <SpokeRoute
             exact
-            path="/spoke/request/bookings"
+            path="/spoke/request/appointment"
             component={RequestedSpokeAppointments}
           ></SpokeRoute>
           <SpokeRoute
@@ -135,7 +157,7 @@ export default function HeaderComponent() {
             exact
             component={UpdateStory}
           ></AdminRoute>
-        </Box>
+        </StyledBox>
       </Switch>
     </Fragment>
   );

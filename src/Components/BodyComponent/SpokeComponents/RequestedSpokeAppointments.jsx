@@ -18,15 +18,17 @@ import OpenInFullIcon from "@mui/icons-material/OpenInFull";
 import Avatar from "@mui/material/Avatar";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import CircularProgress from "@mui/material/CircularProgress";
+import { CircularProgress, Badge } from "@mui/material";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
-    backgroundColor: theme.palette.common.black,
+    backgroundColor: "#1976d2",
     color: theme.palette.common.white,
+    padding: 8,
   },
   [`&.${tableCellClasses.body}`]: {
-    fontSize: 14,
+    fontSize: 12,
+    padding: 8,
   },
 }));
 
@@ -38,6 +40,12 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:last-child td, &:last-child th": {
     border: 0,
   },
+}));
+
+const SmallAvatar = styled(Avatar)(({ theme }) => ({
+  width: 22,
+  height: 22,
+  border: `2px solid ${theme.palette.background.paper}`,
 }));
 
 const tableHeadStyle = {
@@ -86,8 +94,8 @@ const RequestedSpokeAppointments = () => {
   return (
     <Fragment>
       <NavBreadCrumb
-        path="/spoke/request/bookings"
-        name="/spoke/request/bookings"
+        path="/spoke/request/appointment"
+        name="Requested Appointments"
       ></NavBreadCrumb>{" "}
       {loading ? (
         <CircularProgress></CircularProgress>
@@ -115,7 +123,24 @@ const RequestedSpokeAppointments = () => {
                   {requestedAppointments.map((row) => (
                     <StyledTableRow style={{ textAlign: "left" }} key={row._id}>
                       <StyledTableCell>
-                        <Avatar alt="img" src={row.requestedTo.profilePhoto} />
+                        <Badge
+                          overlap="circular"
+                          anchorOrigin={{
+                            vertical: "bottom",
+                            horizontal: "right",
+                          }}
+                          badgeContent={
+                            <SmallAvatar
+                              alt="img"
+                              src={row.requestedBy.profilePhoto}
+                            />
+                          }
+                        >
+                          <Avatar
+                            alt="img"
+                            src={row.requestedTo.profilePhoto}
+                          />
+                        </Badge>
                       </StyledTableCell>
                       <StyledTableCell>
                         {row.requestedTo.firstName} {row.requestedTo.lastName}
@@ -150,11 +175,11 @@ const RequestedSpokeAppointments = () => {
                         {row._id}
                       </StyledTableCell>
                       <StyledTableCell>
-                        <Tooltip title="click for more information">
+                        <Tooltip title="more information">
                           <Button
                             size="small"
                             component={Link}
-                            to={`/request/appointment/${row._id}`}
+                            to={`/spoke/request/appointment/${row._id}`}
                           >
                             <OpenInFullIcon
                               color="primary"

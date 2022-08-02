@@ -16,6 +16,7 @@ import GroupIcon from "@mui/icons-material/Group";
 import AddCardIcon from "@mui/icons-material/AddCard";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import { isAuth } from "../../Common/helpers";
+import { blue, blueGrey } from "@mui/material/colors";
 
 const SideNavData = ({ handleDrawerClose }) => {
   const classes = useStyles();
@@ -70,7 +71,7 @@ const SideNavData = ({ handleDrawerClose }) => {
     },
     {
       label: "Requests",
-      link: "/spoke/request/bookings",
+      link: "/spoke/request/appointment",
       icon: <CalendarMonthIcon />,
       access: ["spoke"],
     },
@@ -92,14 +93,18 @@ const SideNavData = ({ handleDrawerClose }) => {
               <Button
                 size="small"
                 onClick={() => handleDrawerClose()}
-                className={classes.navButton}
+                style={{ width: "100%", textTransform: "uppercase" }}
               >
                 <ListItem
                   exact
                   key={i}
                   component={NavLink}
                   to={item.link}
-                  className={classes.navlink}
+                  style={{
+                    color: blueGrey[700],
+                    transition: "0.8s",
+                    "&:hover  div": { color: blue["A400"] },
+                  }}
                   activeClassName={classes.selectedNav}
                 >
                   <ListItemIcon>{item.icon}</ListItemIcon>
