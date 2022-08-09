@@ -132,7 +132,10 @@ const NewStory = ({ history }) => {
         <CardHeader
           title="New Story"
           titleTypographyProps={{variant:'h7'}}
-          sx={{ textAlign: "center", clipPath: "polygon(0 0,100% 0,100% 100%,36px 100%,18px calc(100% - 18px),0 calc(100% - 36px))", background: "#4dabf5", height: 5 }}
+          sx={{ textAlign: "center", 
+            clipPath: "polygon(0 0,100% 0,100% 100%,36px 100%,18px calc(100% - 18px),0 calc(100% - 36px))", 
+            background: "#4dabf5", 
+            height: 5 }}
         >
         </CardHeader>
         <Box
@@ -154,7 +157,10 @@ const NewStory = ({ history }) => {
                 xs={12}
                 sm={6}
                 md={4}
-                sx={{ width: 275, height: 275, background: 'grey', ml: 4 }}
+                sx={{ width: 275, 
+                    height: 275, 
+                    background: 'grey', 
+                    ml: 4 }}
               >
                 <ImageListItem>
                   <img src={`${preview}`} alt="" loading="lazy"/>
@@ -206,7 +212,8 @@ const NewStory = ({ history }) => {
                 name="storyTitle"
                 value={storyTitle}
                 onChange={handleChange("storyTitle")}
-                sx={{ width: '93.5%', ml: 4 }}
+                sx={{ width: '93.5%', 
+                      ml: 4 }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -217,7 +224,8 @@ const NewStory = ({ history }) => {
                 name="storyHeading"
                 value={storyHeading}
                 onChange={handleChange("storyHeading")}
-                sx={{ width: '93.5%', ml: 4 }}
+                sx={{ width: '93.5%', 
+                      ml: 4 }}
               />
             </Grid>
             <Grid item xs={12}>
@@ -227,7 +235,8 @@ const NewStory = ({ history }) => {
                 name="storyLink"
                 value={storyLink}
                 onChange={handleChange("storyLink")}
-                sx={{ width: '93.5%', ml: 4 }}
+                sx={{ width: '93.5%', 
+                      ml: 4 }}
               />
             </Grid>
           </Grid>

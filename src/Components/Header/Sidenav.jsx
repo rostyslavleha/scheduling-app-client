@@ -1,7 +1,7 @@
 import { Drawer, Hidden } from "@mui/material";
 import React from "react";
 import { useStyles } from "./HeaderStyle";
-import SideNavData from "./SideNavData";
+import SideNavData from "./SidenavData";
 
 const SideNav = ({ mobileOpen, handleDrawerClose, handleDrawerToggle }) => {
   const classes = useStyles();
